@@ -3,55 +3,34 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float moveSpeed = 5f;
-    public float rotationSpeed = 700f;
-    public Animator animator;
+    public float MoveSpeed = 5f;
+    public float RotationSpeed = 700f;
 
     private CharacterController characterController;
     private Vector2 moveInput;
+    Animator m_Animator;
 
     private InputSystemActions playerControls;
 
     void Awake()
     {
-        // PlayerControls 액션 인스턴스 생성
         playerControls = new InputSystemActions();
+        m_Animator = this.GetComponent<Animator>();
     }
 
     void OnEnable()
     {
-        // 이동 액션을 바인딩
+        // binding actions
         playerControls.Player.Move.performed += OnMovePerformed;
         playerControls.Player.Move.canceled += OnMoveCanceled;
-
-        // 공격 액션을 바인딩
         playerControls.Player.Attack.performed += OnAttackPerformed;
 
-        // Input 활성화
         playerControls.Enable();
     }
 
     void OnDisable()
     {
-        // 입력 해제
         playerControls.Disable();
-    }
-
-    // 이동 입력 처리
-    private void OnMovePerformed(InputAction.CallbackContext context)
-    {
-        moveInput = context.ReadValue<Vector2>();
-    }
-
-    private void OnMoveCanceled(InputAction.CallbackContext context)
-    {
-        moveInput = Vector2.zero; // 이동이 멈추면 입력을 초기화
-    }
-
-    // 공격 입력 처리
-    private void OnAttackPerformed(InputAction.CallbackContext context)
-    {
-        animator.SetTrigger("Attack");
     }
 
     void Start()
@@ -61,19 +40,45 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        // 이동 처리
-        Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
-        characterController.Move(move * moveSpeed * Time.deltaTime);
+        bool isMoving = moveInput.x != 0f || moveInput.y != 0f;
+        m_Animator.SetBool("IsMoving", isMoving);
 
-        // 회전 처리
-        if (move.magnitude > 0.1f)
+        float moveDirection = 0f;
+
+        if (moveInput.y > 0) // forward
         {
-            float targetAngle = Mathf.Atan2(moveInput.x, moveInput.y) * Mathf.Rad2Deg;
-            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref rotationSpeed, 0.1f);
-            transform.rotation = Quaternion.Euler(0, angle, 0);
+            moveDirection = 1f;
+        }
+        else if (moveInput.y < 0) // back
+        {
+            moveDirection = -1f;
+        }
+        else if (moveInput.x > 0) // right
+        {
+            moveDirection = 2f;
+        }
+        else if (moveInput.x < 0) // left
+        {
+            moveDirection = -2f;
         }
 
-        // 애니메이션 처리
-        animator.SetBool("IsMoving", move.magnitude > 0.1f);
+        m_Animator.SetFloat("MovingDirection", moveDirection);
+    }
+    
+    // input move
+    private void OnMovePerformed(InputAction.CallbackContext context)
+    {
+        moveInput = context.ReadValue<Vector2>();
+    }
+
+    private void OnMoveCanceled(InputAction.CallbackContext context)
+    {
+        moveInput = Vector2.zero;
+    }
+
+    // input attack
+    private void OnAttackPerformed(InputAction.CallbackContext context)
+    {
+        m_Animator.SetTrigger("Attack");
     }
 }
