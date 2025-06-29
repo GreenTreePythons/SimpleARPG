@@ -349,12 +349,16 @@ public class DeadState : ICharacterState
     {
         Debug.Log($"{m_Controller.gameObject.name} 사망!");
         m_Controller.CharacterAnimator.SetTrigger("Dead");
+        
         // 콜라이더 비활성화 등 추가
         if (m_Controller.TryGetComponent<Collider>(out var col))
             col.enabled = false;
+
         // 무기, AI 등 끄기
         if (m_Controller.TryGetComponent<SwordController>(out var sword))
             sword.enabled = false;
+
+        HPBarUIManager.Instance?.Unregister(m_Controller.CharacterController);
     }
     public void HandleInput() { }
     public void UpdateState() { }

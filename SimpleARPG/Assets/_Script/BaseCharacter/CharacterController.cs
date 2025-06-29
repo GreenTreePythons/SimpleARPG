@@ -4,6 +4,7 @@ public enum CharacterStat
 {
     HP, Strong, Defence
 }
+
 public abstract class CharacterController : MonoBehaviour, IWeaponController
 {
     [Header("Base Stats")]
@@ -12,12 +13,14 @@ public abstract class CharacterController : MonoBehaviour, IWeaponController
     [SerializeField] protected int m_Defence = 5;
 
     [SerializeField] SwordController m_SwordController;
+    [SerializeField] HPBarUI m_HPBar;
 
     protected int m_CurrentHp;
 
     protected virtual void Awake()
     {
         m_CurrentHp = m_MaxHp;
+        HPBarUIManager.Instance?.Register(this);
     }
 
     public virtual void EnableWeaponHitBox()
@@ -34,6 +37,8 @@ public abstract class CharacterController : MonoBehaviour, IWeaponController
     {
         m_CurrentHp = Mathf.Max(0, m_CurrentHp - damage);
         Debug.Log($"{gameObject.name} {damage} 피격! 남은 체력: {m_CurrentHp}");
+
+        HPBarUIManager.Instance?.UpdateHP(this);
     }
 
     public int GetStatValue(CharacterStat characterStat) => characterStat switch
@@ -47,9 +52,6 @@ public abstract class CharacterController : MonoBehaviour, IWeaponController
     public int GetCurrentHp() => m_CurrentHp;
 
     public bool IsDead() => m_CurrentHp <= 0;
-    
-    public abstract bool IsEnemy(CharacterController other);
 
-    // 필요하다면 공용 데이터(HP, 스탯 등)도 여기에
-    // 공용 피격 처리, 공용 Move/Attack 등도 가능
+    public abstract bool IsEnemy(CharacterController other);
 }
