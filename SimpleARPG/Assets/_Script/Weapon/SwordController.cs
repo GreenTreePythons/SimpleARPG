@@ -34,7 +34,7 @@ public class SwordController : MonoBehaviour
         if (!m_CharacterController.IsEnemy(targetCharCtrl)) return;
 
         m_HitTargets.Add(other);
-        stateController.OnDamaged(transform.position, m_KnockbackForce, m_DamagedDuration);
+        stateController.OnDamaged(transform.position, m_KnockbackForce, m_DamagedDuration, m_CharacterController.GetStatValue(CharacterStat.Strong));
     }
 
     public void EnableHitBox()

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public enum CharacterState
 {
-    Idle, Move, Attack1, Attack2, Attack3, Parry, Block, Damaged
+    Idle, Move, Attack1, Attack2, Attack3, Parry, Block, Damaged, Dead
 }
 
 public interface ICharacterState
@@ -333,5 +333,31 @@ public class DamagedState : ICharacterState, IStateTimer
 
     public CharacterState GetState() => CharacterState.Damaged; // enum에 Damaged 없으면 -1로 처리
 
+    public void ExitState() { }
+}
+
+public class DeadState : ICharacterState
+{
+    private CharacterStateController m_Controller;
+
+    public DeadState(CharacterStateController c)
+    {
+        m_Controller = c;
+    }
+
+    public void EnterState()
+    {
+        Debug.Log($"{m_Controller.gameObject.name} 사망!");
+        m_Controller.CharacterAnimator.SetTrigger("Dead");
+        // 콜라이더 비활성화 등 추가
+        if (m_Controller.TryGetComponent<Collider>(out var col))
+            col.enabled = false;
+        // 무기, AI 등 끄기
+        if (m_Controller.TryGetComponent<SwordController>(out var sword))
+            sword.enabled = false;
+    }
+    public void HandleInput() { }
+    public void UpdateState() { }
+    public CharacterState GetState() => CharacterState.Dead;
     public void ExitState() { }
 }

@@ -11,8 +11,9 @@ public class PlayerController : CharacterController
     private bool m_ParryPressed = false;
     private bool m_BlockPressed = false;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         m_InputActions = new InputSystemActions();
         m_CharacterStateController = GetComponent<CharacterStateController>();
     }

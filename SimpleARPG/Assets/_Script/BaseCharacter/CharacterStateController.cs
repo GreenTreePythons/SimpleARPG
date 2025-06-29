@@ -20,12 +20,13 @@ public class CharacterStateController : MonoBehaviour
     private ParryState m_ParryState;
     private BlockState m_BlockState;
     private DamagedState m_DamagedState;
+    private DeadState m_DeadState;
 
     public Vector2 MoveInput { get; private set; }
     public bool AttackPressed { get; private set; }
     public bool ParryPressed { get; private set; }
     public bool BlockPressed { get; private set; }
-    
+
     public IdleState IdleState => m_IdleState;
     public MovingState MovingState => m_MovingState;
     public Attack1State Attack1State => m_Attack1State;
@@ -34,6 +35,7 @@ public class CharacterStateController : MonoBehaviour
     public ParryState ParryState => m_ParryState;
     public BlockState BlockState => m_BlockState;
     public DamagedState DamagedState => m_DamagedState;
+    public DeadState DeadState => m_DeadState;
 
     public CharacterController CharacterController => m_CharacterController;
     public Animator CharacterAnimator => m_Animator;
@@ -49,6 +51,7 @@ public class CharacterStateController : MonoBehaviour
         m_ParryState = new ParryState(this);
         m_BlockState = new BlockState(this);
         m_DamagedState = new DamagedState(this);
+        m_DeadState = new DeadState(this);
         m_CharacterController = GetComponent<CharacterController>();
     }
 
@@ -74,6 +77,7 @@ public class CharacterStateController : MonoBehaviour
 
     public void ChangeState(ICharacterState newState)
     {
+        if (m_CurrentState == m_DeadState) return;
         m_PreviousState?.ExitState();
         m_PreviousState = m_CurrentState;
         m_CurrentState = newState;
@@ -89,11 +93,24 @@ public class CharacterStateController : MonoBehaviour
         m_Animator.SetBool("IsMoving", m_CurrentState.GetState() == CharacterState.Move);
     }
 
-    public void OnDamaged(Vector3 attackerPosition, float knockbackForce, float duration = 0.25f)
+    public void OnDamaged(Vector3 attackerPosition, float knockbackForce, float duration = 0.25f, int damage = 0)
     {
+        // 공격자 위치, 넉백, 애니메이션 등 처리
         Vector3 knockbackDir = (transform.position - attackerPosition).normalized;
         m_DamagedState.SetDamageInfo(knockbackDir, knockbackForce, duration);
-        ChangeState(m_DamagedState);
+
+        // 데미지 처리
+        if (damage > 0)
+        {
+            // 방어력 반영하여 체력 감소
+            int finalDamage = Mathf.Max(1, damage - m_CharacterController.GetStatValue(CharacterStat.Defence));
+            m_CharacterController.ApplyDamage(finalDamage);
+        }
+
+        if (m_CharacterController.GetCurrentHp() <= 0)
+            ChangeState(m_DeadState);
+        else
+            ChangeState(m_DamagedState);
     }
 
     void OnGUI()

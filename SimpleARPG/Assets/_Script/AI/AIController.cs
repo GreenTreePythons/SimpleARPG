@@ -31,8 +31,9 @@ public class AIController : CharacterController
     private int m_CurrentComboCount = 0;
     private bool m_IsAttacking = false;
 
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         m_CharacterStateController = GetComponent<CharacterStateController>();
         m_Animator = GetComponent<Animator>();
         if (m_PlayerTransform == null && GameObject.FindWithTag("Player") != null)
@@ -42,8 +43,8 @@ public class AIController : CharacterController
 
     void Update()
     {
-        if (m_PlayerTransform == null)
-            return;
+        if (m_PlayerTransform == null) return;
+        if (m_CharacterStateController.CharacterController.IsDead()) return;
 
         UpdateBattleState();
         UpdateMoveTarget();
