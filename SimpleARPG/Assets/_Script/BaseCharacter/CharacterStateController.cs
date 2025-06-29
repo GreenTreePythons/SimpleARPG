@@ -8,6 +8,7 @@ public class CharacterStateController : MonoBehaviour
 
     private Animator m_Animator;
     private ICharacterState m_CurrentState;
+    private ICharacterState m_PreviousState;
 
     private IdleState m_IdleState;
     private MovingState m_MovingState;
@@ -16,12 +17,21 @@ public class CharacterStateController : MonoBehaviour
     private Attack3State m_Attack3State;
     private ParryState m_ParryState;
     private BlockState m_BlockState;
+    private DamagedState m_DamagedState;
 
-    // 입력값 저장
     public Vector2 MoveInput { get; private set; }
     public bool AttackPressed { get; private set; }
     public bool ParryPressed { get; private set; }
     public bool BlockPressed { get; private set; }
+    
+    public IdleState IdleState => m_IdleState;
+    public MovingState MovingState => m_MovingState;
+    public Attack1State Attack1State => m_Attack1State;
+    public Attack2State Attack2State => m_Attack2State;
+    public Attack3State Attack3State => m_Attack3State;
+    public ParryState ParryState => m_ParryState;
+    public BlockState BlockState => m_BlockState;
+    public DamagedState DamagedState => m_DamagedState;
 
     public Animator CharacterAnimator => m_Animator;
 
@@ -35,6 +45,7 @@ public class CharacterStateController : MonoBehaviour
         m_Attack3State = new Attack3State(this);
         m_ParryState = new ParryState(this);
         m_BlockState = new BlockState(this);
+        m_DamagedState = new DamagedState(this);
     }
 
     void Start()
@@ -59,17 +70,11 @@ public class CharacterStateController : MonoBehaviour
 
     public void ChangeState(ICharacterState newState)
     {
+        m_PreviousState?.ExitState();
+        m_PreviousState = m_CurrentState;
         m_CurrentState = newState;
         m_CurrentState.EnterState();
     }
-
-    public IdleState IdleState => m_IdleState;
-    public MovingState MovingState => m_MovingState;
-    public Attack1State Attack1State => m_Attack1State;
-    public Attack2State Attack2State => m_Attack2State;
-    public Attack3State Attack3State => m_Attack3State;
-    public ParryState ParryState => m_ParryState;
-    public BlockState BlockState => m_BlockState;
 
     private void UpdateAnimatorParameters()
     {
@@ -80,11 +85,22 @@ public class CharacterStateController : MonoBehaviour
         m_Animator.SetBool("IsMoving", m_CurrentState.GetState() == CharacterState.Move);
     }
 
+    public void OnDamaged(Vector3 attackerPosition, float knockbackForce, float duration = 0.25f)
+    {
+        Vector3 knockbackDir = (transform.position - attackerPosition).normalized;
+        m_DamagedState.SetDamageInfo(knockbackDir, knockbackForce, duration);
+        ChangeState(m_DamagedState);
+    }
+
     void OnGUI()
     {
         GUIStyle myStyle = new GUIStyle(GUI.skin.label);
         myStyle.normal.textColor = Color.green;
         myStyle.fontSize = 20;
-        GUI.Label(new Rect(10, 10, 200, 30), $"Current State : {m_CurrentState.GetState()}", myStyle);
+
+        if (this.tag == "Player")
+            GUI.Label(new Rect(10, 10, 200, 30), $"Current State : {m_CurrentState.GetState()}", myStyle);
+        else if (this.tag == "AI")
+            GUI.Label(new Rect(1000, 10, 200, 30), $"Current State : {m_CurrentState.GetState()}", myStyle);
     }
 }

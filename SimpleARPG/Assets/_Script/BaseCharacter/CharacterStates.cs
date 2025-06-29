@@ -2,7 +2,7 @@ using UnityEngine;
 
 public enum CharacterState
 {
-    Idle, Move, Attack1, Attack2, Attack3, Parry, Block
+    Idle, Move, Attack1, Attack2, Attack3, Parry, Block, Damaged
 }
 
 public interface ICharacterState
@@ -10,6 +10,7 @@ public interface ICharacterState
     void EnterState();
     void HandleInput();
     void UpdateState();
+    void ExitState();
     CharacterState GetState();
 }
 
@@ -41,6 +42,11 @@ public class IdleState : ICharacterState
     }
     public void UpdateState() { }
     public CharacterState GetState() => CharacterState.Idle;
+
+    public void ExitState()
+    {
+        
+    }
 }
 
 public class MovingState : ICharacterState
@@ -66,6 +72,11 @@ public class MovingState : ICharacterState
     }
     public void UpdateState() { }
     public CharacterState GetState() => CharacterState.Move;
+
+    public void ExitState()
+    {
+
+    }
 }
 
 public class Attack1State : ICharacterState, IStateTimer
@@ -79,11 +90,13 @@ public class Attack1State : ICharacterState, IStateTimer
 
     public void EnterState()
     {
-        Debug.Log("Enter Attack1 State");
+        Debug.Log($"Enter Attack1State");
         CurrentStateTime = 0;
         m_NextComboQueued = false;
-        m_Controller.CharacterAnimator.SetTrigger("Attack1");
+        m_Controller.CharacterAnimator.SetInteger("AttackComboCount", 1);
+        m_Controller.CharacterAnimator.SetTrigger("Attack");
     }
+
     public void HandleInput()
     {
         if (m_Controller.MoveInput.magnitude > 0)
@@ -98,6 +111,7 @@ public class Attack1State : ICharacterState, IStateTimer
             m_NextComboQueued = true;
         }
     }
+
     public void UpdateState()
     {
         CurrentStateTime += Time.deltaTime;
@@ -110,9 +124,15 @@ public class Attack1State : ICharacterState, IStateTimer
         }
 
         if (CurrentStateTime > 5.0f || animState.normalizedTime >= 0.95f)
-                m_Controller.ChangeState(m_Controller.IdleState);
+            m_Controller.ChangeState(m_Controller.IdleState);
     }
+
     public CharacterState GetState() => CharacterState.Attack1;
+
+    public void ExitState()
+    {
+        
+    }
 }
 
 public class Attack2State : ICharacterState, IStateTimer
@@ -125,11 +145,13 @@ public class Attack2State : ICharacterState, IStateTimer
 
     public void EnterState()
     {
-        Debug.Log("Enter Attack2 State");
+        Debug.Log($"Enter Attack2State");
         CurrentStateTime = 0f;
         m_NextComboQueued = false;
-        m_Controller.CharacterAnimator.SetTrigger("Attack2");
+        m_Controller.CharacterAnimator.SetInteger("AttackComboCount", 2);
+        m_Controller.CharacterAnimator.SetTrigger("Attack");
     }
+    
     public void HandleInput()
     {
         if (m_Controller.MoveInput.magnitude > 0)
@@ -137,13 +159,14 @@ public class Attack2State : ICharacterState, IStateTimer
             m_Controller.ChangeState(m_Controller.MovingState);
             return;
         }
-        
+
         var animState = m_Controller.CharacterAnimator.GetCurrentAnimatorStateInfo(0);
         if (m_Controller.AttackPressed && animState.normalizedTime > 0.2f)
         {
             m_NextComboQueued = true;
         }
     }
+
     public void UpdateState()
     {
         CurrentStateTime += Time.deltaTime;
@@ -159,7 +182,13 @@ public class Attack2State : ICharacterState, IStateTimer
             m_Controller.ChangeState(m_Controller.IdleState);
 
     }
+
     public CharacterState GetState() => CharacterState.Attack2;
+
+    public void ExitState()
+    {
+        
+    }
 }
 
 public class Attack3State : ICharacterState, IStateTimer
@@ -171,9 +200,10 @@ public class Attack3State : ICharacterState, IStateTimer
 
     public void EnterState()
     {
-        Debug.Log("Enter Attack3 State");
+        Debug.Log($"Enter Attack3State");
         CurrentStateTime = 0f;
-        m_Controller.CharacterAnimator.SetTrigger("Attack3");
+        m_Controller.CharacterAnimator.SetInteger("AttackComboCount", 3);
+        m_Controller.CharacterAnimator.SetTrigger("Attack");
     }
     
     public void HandleInput()
@@ -193,8 +223,13 @@ public class Attack3State : ICharacterState, IStateTimer
         if (CurrentStateTime > 5.0f || animState.normalizedTime >= 0.95f)
             m_Controller.ChangeState(m_Controller.IdleState);
     }
-    
+
     public CharacterState GetState() => CharacterState.Attack3;
+
+    public void ExitState()
+    {
+        
+    }
 }
 
 public class ParryState : ICharacterState
@@ -213,6 +248,11 @@ public class ParryState : ICharacterState
             m_Controller.ChangeState(m_Controller.IdleState);
     }
     public CharacterState GetState() => CharacterState.Parry;
+
+    public void ExitState()
+    {
+        
+    }
 }
 
 public class BlockState : ICharacterState
@@ -237,4 +277,57 @@ public class BlockState : ICharacterState
     }
 
     public CharacterState GetState() => CharacterState.Block;
+
+    public void ExitState()
+    {
+
+    }
+}
+
+public class DamagedState : ICharacterState, IStateTimer
+{
+    private CharacterStateController m_Controller;
+    private Vector3 m_KnockbackDir;
+    private float m_KnockbackForce;
+    private float m_Duration;
+    public float CurrentStateTime { get; private set; }
+
+    public DamagedState(CharacterStateController c)
+    {
+        m_Controller = c;
+    }
+
+    public void SetDamageInfo(Vector3 knockbackDir, float knockbackForce, float duration)
+    {
+        m_KnockbackDir = knockbackDir.normalized;
+        m_KnockbackForce = knockbackForce;
+        m_Duration = duration;
+    }
+
+    public void EnterState()
+    {
+        CurrentStateTime = 0f;
+        m_Controller.CharacterAnimator.SetTrigger("Damaged");
+    }
+
+    public void HandleInput()
+    {
+        // 피격 상태에서는 입력 무시
+    }
+
+    public void UpdateState()
+    {
+        CurrentStateTime += Time.deltaTime;
+        // 넉백 이동
+        m_Controller.transform.position += m_KnockbackDir * m_KnockbackForce * Time.deltaTime;
+
+        if (CurrentStateTime >= m_Duration)
+        {
+            m_Controller.ChangeState(m_Controller.IdleState); // 또는 전투 Idle로 복귀
+        }
+    }
+
+    public CharacterState GetState() => CharacterState.Damaged; // enum에 Damaged 없으면 -1로 처리
+
+    public void ExitState() { }
 }
