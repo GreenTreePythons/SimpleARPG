@@ -3,12 +3,14 @@ using UnityEngine;
 public class CharacterStateController : MonoBehaviour
 {
     [SerializeField] float MoveInputLerpSpeed = 12.0f; // 클수록 빠르게 따라감
+    [SerializeField] bool IsAI = true;
 
     private Vector2 m_AnimatorMoveInput = Vector2.zero;
 
     private Animator m_Animator;
     private ICharacterState m_CurrentState;
     private ICharacterState m_PreviousState;
+    private CharacterController m_CharacterController;
 
     private IdleState m_IdleState;
     private MovingState m_MovingState;
@@ -33,6 +35,7 @@ public class CharacterStateController : MonoBehaviour
     public BlockState BlockState => m_BlockState;
     public DamagedState DamagedState => m_DamagedState;
 
+    public CharacterController CharacterController => m_CharacterController;
     public Animator CharacterAnimator => m_Animator;
 
     void Awake()
@@ -46,6 +49,7 @@ public class CharacterStateController : MonoBehaviour
         m_ParryState = new ParryState(this);
         m_BlockState = new BlockState(this);
         m_DamagedState = new DamagedState(this);
+        m_CharacterController = GetComponent<CharacterController>();
     }
 
     void Start()

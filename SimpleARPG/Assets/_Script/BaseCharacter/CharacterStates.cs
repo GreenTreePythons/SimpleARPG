@@ -93,6 +93,9 @@ public class Attack1State : ICharacterState, IStateTimer
         Debug.Log($"Enter Attack1State");
         CurrentStateTime = 0;
         m_NextComboQueued = false;
+
+        m_Controller.CharacterController.EnableWeaponHitBox();
+
         m_Controller.CharacterAnimator.SetInteger("AttackComboCount", 1);
         m_Controller.CharacterAnimator.SetTrigger("Attack");
     }
@@ -131,7 +134,7 @@ public class Attack1State : ICharacterState, IStateTimer
 
     public void ExitState()
     {
-        
+        m_Controller.CharacterController.DisableWeaponHitBox();
     }
 }
 
@@ -148,6 +151,7 @@ public class Attack2State : ICharacterState, IStateTimer
         Debug.Log($"Enter Attack2State");
         CurrentStateTime = 0f;
         m_NextComboQueued = false;
+        m_Controller.CharacterController.EnableWeaponHitBox();
         m_Controller.CharacterAnimator.SetInteger("AttackComboCount", 2);
         m_Controller.CharacterAnimator.SetTrigger("Attack");
     }
@@ -187,14 +191,13 @@ public class Attack2State : ICharacterState, IStateTimer
 
     public void ExitState()
     {
-        
+        m_Controller.CharacterController.DisableWeaponHitBox();
     }
 }
 
 public class Attack3State : ICharacterState, IStateTimer
 {
     private CharacterStateController m_Controller;
-
     public float CurrentStateTime { get; private set; }
     public Attack3State(CharacterStateController c) { m_Controller = c; }
 
@@ -202,6 +205,7 @@ public class Attack3State : ICharacterState, IStateTimer
     {
         Debug.Log($"Enter Attack3State");
         CurrentStateTime = 0f;
+        m_Controller.CharacterController.EnableWeaponHitBox();
         m_Controller.CharacterAnimator.SetInteger("AttackComboCount", 3);
         m_Controller.CharacterAnimator.SetTrigger("Attack");
     }
@@ -228,7 +232,7 @@ public class Attack3State : ICharacterState, IStateTimer
 
     public void ExitState()
     {
-        
+        m_Controller.CharacterController.DisableWeaponHitBox();
     }
 }
 

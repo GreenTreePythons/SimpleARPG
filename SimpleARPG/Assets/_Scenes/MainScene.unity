@@ -245,6 +245,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MoveInputLerpSpeed: 12
+  IsAI: 1
 --- !u!114 &149378105
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -257,6 +258,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3851100c806207043b59e2200f680069, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SwordController: {fileID: 844130259}
   m_PlayerTransform: {fileID: 2115468521}
   m_BattleMoveSpeed: 2
   m_NormalMoveSpeed: 3.5
@@ -631,6 +633,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_KnockbackForce: 6
   m_DamagedDuration: 0.2
+  m_HitBoxCollider: {fileID: 844130260}
 --- !u!65 &844130260
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -650,8 +653,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.061516996, y: 1.518537, z: 0.29967657}
-  m_Center: {x: -0.000000070420704, y: 0.59073204, z: -0.0000002912341}
+  m_Size: {x: 0.061516996, y: 1.32, z: 0.29967657}
+  m_Center: {x: -0.000000070420704, y: 0.71, z: -0.0000002912341}
 --- !u!1 &893458900 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3868543288187839086, guid: 459f79a004eb51144840e79b6950c697, type: 3}
@@ -676,8 +679,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.061516996, y: 1.518537, z: 0.29967657}
-  m_Center: {x: -0.000000070420704, y: 0.59073186, z: 0.00000006639376}
+  m_Size: {x: 0.061516996, y: 1.32, z: 0.29967657}
+  m_Center: {x: -0.000000070420704, y: 0.71, z: -0.0000002912341}
 --- !u!114 &893458905
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -692,6 +695,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_KnockbackForce: 6
   m_DamagedDuration: 0.2
+  m_HitBoxCollider: {fileID: 893458904}
 --- !u!1 &894755609
 GameObject:
   m_ObjectHideFlags: 0
@@ -1421,6 +1425,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MoveInputLerpSpeed: 12
+  IsAI: 0
 --- !u!114 &2115468526
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1433,6 +1438,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe8f8e2375302ae4b8c239518d61c15d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SwordController: {fileID: 893458905}
 --- !u!54 &2115468528
 Rigidbody:
   m_ObjectHideFlags: 0

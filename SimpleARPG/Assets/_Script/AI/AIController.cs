@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class AIController : MonoBehaviour
+public class AIController : CharacterController
 {
     [Header("AI Settings")]
     [SerializeField] private Transform m_PlayerTransform;
@@ -197,7 +197,7 @@ public class AIController : MonoBehaviour
 
     private void UpdateAnimatorParameters()
     {
-        
+
     }
 
     private void ApplyInputToStateController()
@@ -213,4 +213,6 @@ public class AIController : MonoBehaviour
         pos.y = center.y;
         return pos;
     }
+
+    public override bool IsEnemy(CharacterController other) => other is PlayerController;
 }

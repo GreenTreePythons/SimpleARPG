@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : CharacterController
 {
     private InputSystemActions m_InputActions;
     private CharacterStateController m_CharacterStateController;
@@ -86,6 +86,8 @@ public class PlayerController : MonoBehaviour
         m_BlockPressed = false;
         ApplyInput();
     }
+
+    public override bool IsEnemy(CharacterController other) => other is AIController;
 
     /// <summary>
     /// 현재 입력값을 StateController에 전달
