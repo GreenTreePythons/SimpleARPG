@@ -4,54 +4,99 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     private InputSystemActions m_InputActions;
-    private CharacterActionController m_CharacterActionController;
+    private CharacterStateController m_CharacterStateController;
+
+    private Vector2 m_MoveInput = Vector2.zero;
+    private bool m_AttackPressed = false;
+    private bool m_ParryPressed = false;
+    private bool m_BlockPressed = false;
 
     private void Awake()
     {
         m_InputActions = new InputSystemActions();
-        m_CharacterActionController = GetComponent<CharacterActionController>();
+        m_CharacterStateController = GetComponent<CharacterStateController>();
     }
 
-    void OnEnable()
+    private void OnEnable()
     {
         m_InputActions.Player.Move.performed += OnMovePerformed;
         m_InputActions.Player.Move.canceled += OnMoveCanceled;
+
         m_InputActions.Player.Attack.performed += OnAttackPerformed;
+        m_InputActions.Player.Attack.canceled += OnAttackCanceled;
+
         m_InputActions.Player.Parry.performed += OnParryPerformed;
+        m_InputActions.Player.Parry.canceled += OnParryCanceled;
+
         m_InputActions.Player.Block.performed += OnBlockPerformed;
+        m_InputActions.Player.Block.canceled += OnBlockCanceled;
 
         m_InputActions.Enable();
     }
 
-    void OnDisable()
+    private void OnDisable()
     {
         m_InputActions.Disable();
     }
 
-    void OnMovePerformed(InputAction.CallbackContext context)
+    private void OnMovePerformed(InputAction.CallbackContext context)
     {
-        Vector2 moveVec = context.ReadValue<Vector2>();
-        m_CharacterActionController.HandleInput(moveVec, false, false, false);
+        m_MoveInput = context.ReadValue<Vector2>();
+        ApplyInput();
     }
 
-    void OnMoveCanceled(InputAction.CallbackContext context)
+    private void OnMoveCanceled(InputAction.CallbackContext context)
     {
-        Vector2 moveVec = Vector2.zero;
-        m_CharacterActionController.HandleInput(moveVec, m_CharacterActionController.AttackPressed, m_CharacterActionController.ParryPressed, m_CharacterActionController.BlockPressed);
+        m_MoveInput = Vector2.zero;
+        ApplyInput();
     }
 
-    void OnAttackPerformed(InputAction.CallbackContext context)
+    private void OnAttackPerformed(InputAction.CallbackContext context)
     {
-        m_CharacterActionController.HandleInput(m_CharacterActionController.MoveInput, true, false, false);
+        m_AttackPressed = true;
+        ApplyInput();
     }
 
-    void OnParryPerformed(InputAction.CallbackContext context)
+    private void OnAttackCanceled(InputAction.CallbackContext context)
     {
-        m_CharacterActionController.HandleInput(m_CharacterActionController.MoveInput, false, true, false);
+        m_AttackPressed = false;
+        ApplyInput();
     }
 
-    void OnBlockPerformed(InputAction.CallbackContext context)
+    private void OnParryPerformed(InputAction.CallbackContext context)
     {
-        m_CharacterActionController.HandleInput(m_CharacterActionController.MoveInput, false, false, true);
+        m_ParryPressed = true;
+        ApplyInput();
+    }
+
+    private void OnParryCanceled(InputAction.CallbackContext context)
+    {
+        m_ParryPressed = false;
+        ApplyInput();
+    }
+
+    private void OnBlockPerformed(InputAction.CallbackContext context)
+    {
+        m_BlockPressed = true;
+        ApplyInput();
+    }
+
+    private void OnBlockCanceled(InputAction.CallbackContext context)
+    {
+        m_BlockPressed = false;
+        ApplyInput();
+    }
+
+    /// <summary>
+    /// 현재 입력값을 StateController에 전달
+    /// </summary>
+    private void ApplyInput()
+    {
+        m_CharacterStateController.SetInput(
+            m_MoveInput,
+            m_AttackPressed,
+            m_ParryPressed,
+            m_BlockPressed
+        );
     }
 }
