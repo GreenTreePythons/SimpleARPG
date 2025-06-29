@@ -86,7 +86,14 @@ public class Attack1State : ICharacterState, IStateTimer
     }
     public void HandleInput()
     {
-        if (m_Controller.AttackPressed)
+        if (m_Controller.MoveInput.magnitude > 0)
+        {
+            m_Controller.ChangeState(m_Controller.MovingState);
+            return;
+        }
+
+        var animState = m_Controller.CharacterAnimator.GetCurrentAnimatorStateInfo(0);
+        if (m_Controller.AttackPressed && animState.normalizedTime > 0.2f)
         {
             m_NextComboQueued = true;
         }
@@ -94,16 +101,15 @@ public class Attack1State : ICharacterState, IStateTimer
     public void UpdateState()
     {
         CurrentStateTime += Time.deltaTime;
-        Debug.Log($"Update Attack1 State : {CurrentStateTime}");
         var animState = m_Controller.CharacterAnimator.GetCurrentAnimatorStateInfo(0);
 
-        if (animState.IsName("Attack1") && animState.normalizedTime > 0.7f)
+        if (animState.normalizedTime > 0.7f)
         {
             if (m_NextComboQueued)
                 m_Controller.ChangeState(m_Controller.Attack2State);
         }
 
-        if (CurrentStateTime > 5.0f || animState.normalizedTime >= 0.95)
+        if (CurrentStateTime > 5.0f || animState.normalizedTime >= 0.95f)
                 m_Controller.ChangeState(m_Controller.IdleState);
     }
     public CharacterState GetState() => CharacterState.Attack1;
@@ -126,7 +132,14 @@ public class Attack2State : ICharacterState, IStateTimer
     }
     public void HandleInput()
     {
-        if (m_Controller.AttackPressed)
+        if (m_Controller.MoveInput.magnitude > 0)
+        {
+            m_Controller.ChangeState(m_Controller.MovingState);
+            return;
+        }
+        
+        var animState = m_Controller.CharacterAnimator.GetCurrentAnimatorStateInfo(0);
+        if (m_Controller.AttackPressed && animState.normalizedTime > 0.2f)
         {
             m_NextComboQueued = true;
         }
@@ -134,16 +147,15 @@ public class Attack2State : ICharacterState, IStateTimer
     public void UpdateState()
     {
         CurrentStateTime += Time.deltaTime;
-        Debug.Log($"Update Attack2 State : {CurrentStateTime}");
         var animState = m_Controller.CharacterAnimator.GetCurrentAnimatorStateInfo(0);
 
-        if (animState.IsName("Attack2") && animState.normalizedTime > 0.7f)
+        if (animState.normalizedTime > 0.7f)
         {
             if (m_NextComboQueued)
                 m_Controller.ChangeState(m_Controller.Attack3State);
         }
 
-        if (CurrentStateTime > 5.0f || animState.normalizedTime >= 0.95)
+        if (CurrentStateTime > 5.0f || animState.normalizedTime >= 0.95f)
             m_Controller.ChangeState(m_Controller.IdleState);
 
     }
@@ -163,15 +175,25 @@ public class Attack3State : ICharacterState, IStateTimer
         CurrentStateTime = 0f;
         m_Controller.CharacterAnimator.SetTrigger("Attack3");
     }
-    public void HandleInput() { }
+    
+    public void HandleInput()
+    {
+        if (m_Controller.MoveInput.magnitude > 0)
+        {
+            m_Controller.ChangeState(m_Controller.MovingState);
+            return;
+        }
+    }
+
     public void UpdateState()
     {
         CurrentStateTime += Time.deltaTime;
         var animState = m_Controller.CharacterAnimator.GetCurrentAnimatorStateInfo(0);
 
-        if (CurrentStateTime > 5.0f || animState.normalizedTime >= 0.95)
+        if (CurrentStateTime > 5.0f || animState.normalizedTime >= 0.95f)
             m_Controller.ChangeState(m_Controller.IdleState);
     }
+    
     public CharacterState GetState() => CharacterState.Attack3;
 }
 

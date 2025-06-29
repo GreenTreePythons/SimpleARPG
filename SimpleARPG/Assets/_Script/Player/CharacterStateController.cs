@@ -2,10 +2,13 @@ using UnityEngine;
 
 public class CharacterStateController : MonoBehaviour
 {
+    [SerializeField] float MoveInputLerpSpeed = 12.0f; // 클수록 빠르게 따라감
+
+    private Vector2 m_AnimatorMoveInput = Vector2.zero;
+
     private Animator m_Animator;
     private ICharacterState m_CurrentState;
 
-    // State 객체들 재사용
     private IdleState m_IdleState;
     private MovingState m_MovingState;
     private Attack1State m_Attack1State;
@@ -58,10 +61,6 @@ public class CharacterStateController : MonoBehaviour
     {
         m_CurrentState = newState;
         m_CurrentState.EnterState();
-
-        AttackPressed = false;
-        ParryPressed = false;
-        BlockPressed = false;
     }
 
     public IdleState IdleState => m_IdleState;
@@ -74,13 +73,10 @@ public class CharacterStateController : MonoBehaviour
 
     private void UpdateAnimatorParameters()
     {
-        float moveDirection = 0;
-        if (MoveInput.y > 0) moveDirection = 1;
-        else if (MoveInput.y < 0) moveDirection = -1;
-        else if (MoveInput.x > 0) moveDirection = 2;
-        else if (MoveInput.x < 0) moveDirection = -2;
+        m_AnimatorMoveInput = Vector2.Lerp(m_AnimatorMoveInput, MoveInput, Time.deltaTime * MoveInputLerpSpeed);
 
-        m_Animator.SetFloat("MovingDirection", moveDirection);
+        m_Animator.SetFloat("MovingX", m_AnimatorMoveInput.x);
+        m_Animator.SetFloat("MovingY", m_AnimatorMoveInput.y);
         m_Animator.SetBool("IsMoving", m_CurrentState.GetState() == CharacterState.Move);
     }
 
