@@ -93,7 +93,7 @@ public class CharacterStateController : MonoBehaviour
         m_Animator.SetBool("IsMoving", m_CurrentState.GetState() == CharacterState.Move);
     }
 
-    public void OnDamaged(Vector3 attackerPosition, float knockbackForce, float duration = 0.25f, int damage = 0)
+    public void OnDamaged(Vector3 attackerPosition, float knockbackForce, float duration = 0.25f, float damage = 0)
     {
         // 공격자 위치, 넉백, 애니메이션 등 처리
         Vector3 knockbackDir = (transform.position - attackerPosition).normalized;
@@ -103,7 +103,7 @@ public class CharacterStateController : MonoBehaviour
         if (damage > 0)
         {
             // 방어력 반영하여 체력 감소
-            int finalDamage = Mathf.Max(1, damage - m_CharacterController.GetStatValue(CharacterStat.Defence));
+            float finalDamage = Mathf.Max(1, damage - m_CharacterController.GetStatValue(CharacterStat.Defence));
             m_CharacterController.ApplyDamage(finalDamage);
         }
 

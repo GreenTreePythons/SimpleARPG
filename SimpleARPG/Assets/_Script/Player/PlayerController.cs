@@ -18,6 +18,22 @@ public class PlayerController : CharacterController
         m_CharacterStateController = GetComponent<CharacterStateController>();
     }
 
+    void Update()
+    {
+        if (m_MoveInput.magnitude > 0.01f)
+        {
+            // 입력값을 월드 좌표계로 변환 (카메라 기준 이동이 필요하다면 Camera.main.transform.forward 등 활용)
+            Vector3 inputDirection = new Vector3(m_MoveInput.x, 0, m_MoveInput.y).normalized;
+
+            // 원하는 방향으로 회전 (자연스럽게)
+            Quaternion targetRotation = Quaternion.LookRotation(inputDirection, Vector3.up);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 12f);
+
+            // 앞으로 이동 (항상 캐릭터의 forward 기준)
+            transform.position += transform.forward * m_NormalMoveSpeed * Time.deltaTime;
+        }
+    }
+
     private void OnEnable()
     {
         m_InputActions.Player.Move.performed += OnMovePerformed;

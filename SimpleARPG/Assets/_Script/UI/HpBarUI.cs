@@ -7,9 +7,9 @@ public class HPBarUI : MonoBehaviour
     [SerializeField] private Image m_FillImage;
     [SerializeField] TextMeshProUGUI m_HpText;
 
-    public void SetHP(int curHp, int maxHp)
+    public void SetHP(float curHp, float maxHp)
     {
-        m_FillImage.fillAmount = Mathf.Clamp01((float)curHp / maxHp);
+        m_FillImage.fillAmount = Mathf.Clamp01(curHp / maxHp);
         m_HpText.text = $"{curHp} / {maxHp}";
     }
 
