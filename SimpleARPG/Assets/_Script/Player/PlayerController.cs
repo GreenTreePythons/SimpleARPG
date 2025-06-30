@@ -1,36 +1,52 @@
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerController : CharacterController
 {
+    [SerializeField] Transform m_PlayerRoot;
+    [SerializeField] private CinemachineCamera m_VcamNormal;
+    [SerializeField] private CinemachineCamera m_VcamLockOnTarget;
+
     private InputSystemActions m_InputActions;
     private CharacterStateController m_CharacterStateController;
+    private CharacterAttackController m_CharacterAttackController;
 
     private Vector2 m_MoveInput = Vector2.zero;
-    private bool m_AttackPressed = false;
     private bool m_ParryPressed = false;
     private bool m_BlockPressed = false;
+    private bool m_IsLockOnTarget = false;
 
     protected override void Awake()
     {
         base.Awake();
         m_InputActions = new InputSystemActions();
         m_CharacterStateController = GetComponent<CharacterStateController>();
+        m_CharacterAttackController = GetComponent<CharacterAttackController>();
     }
 
     void Update()
     {
-        if (m_MoveInput.magnitude > 0.01f)
+        UpdateMovement();
+    }
+
+    private void UpdateMovement()
+    {
+        if (m_MoveInput.magnitude <= 0.01f) return;
+
+        Vector3 inputDirection = new Vector3(m_MoveInput.x, 0, m_MoveInput.y).normalized;
+        var moveSpeed = m_IsLockOnTarget ? m_BattleMoveSpeed : m_NormalMoveSpeed;
+
+        if (m_IsLockOnTarget)
         {
-            // 입력값을 월드 좌표계로 변환 (카메라 기준 이동이 필요하다면 Camera.main.transform.forward 등 활용)
-            Vector3 inputDirection = new Vector3(m_MoveInput.x, 0, m_MoveInput.y).normalized;
-
-            // 원하는 방향으로 회전 (자연스럽게)
+            m_PlayerRoot.position += inputDirection * moveSpeed * Time.deltaTime;
+        }
+        else
+        {
+            var rotateSpeed = 12.0f;
             Quaternion targetRotation = Quaternion.LookRotation(inputDirection, Vector3.up);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 12f);
-
-            // 앞으로 이동 (항상 캐릭터의 forward 기준)
-            transform.position += transform.forward * m_NormalMoveSpeed * Time.deltaTime;
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotateSpeed);
+            m_PlayerRoot.position += transform.forward * moveSpeed * Time.deltaTime;
         }
     }
 
@@ -39,14 +55,16 @@ public class PlayerController : CharacterController
         m_InputActions.Player.Move.performed += OnMovePerformed;
         m_InputActions.Player.Move.canceled += OnMoveCanceled;
 
-        m_InputActions.Player.Attack.performed += OnAttackPerformed;
-        m_InputActions.Player.Attack.canceled += OnAttackCanceled;
+        m_InputActions.Player.LightAttack.performed += OnLightAtackPerformed;
+        m_InputActions.Player.HeavyAttack.performed += OnHeavyAtackPerformed;
 
         m_InputActions.Player.Parry.performed += OnParryPerformed;
         m_InputActions.Player.Parry.canceled += OnParryCanceled;
 
         m_InputActions.Player.Block.performed += OnBlockPerformed;
         m_InputActions.Player.Block.canceled += OnBlockCanceled;
+
+        m_InputActions.Player.LockOnTarget.performed += OnLockOnPerformed;
 
         m_InputActions.Enable();
     }
@@ -68,16 +86,14 @@ public class PlayerController : CharacterController
         ApplyInput();
     }
 
-    private void OnAttackPerformed(InputAction.CallbackContext context)
+    private void OnLightAtackPerformed(InputAction.CallbackContext context)
     {
-        m_AttackPressed = true;
-        ApplyInput();
+        m_CharacterAttackController.EnqueueAttackInput(AttackType.Light);
     }
 
-    private void OnAttackCanceled(InputAction.CallbackContext context)
+    private void OnHeavyAtackPerformed(InputAction.CallbackContext context)
     {
-        m_AttackPressed = false;
-        ApplyInput();
+        m_CharacterAttackController.EnqueueAttackInput(AttackType.Heavy);
     }
 
     private void OnParryPerformed(InputAction.CallbackContext context)
@@ -85,7 +101,6 @@ public class PlayerController : CharacterController
         m_ParryPressed = true;
         ApplyInput();
     }
-
     private void OnParryCanceled(InputAction.CallbackContext context)
     {
         m_ParryPressed = false;
@@ -97,23 +112,35 @@ public class PlayerController : CharacterController
         m_BlockPressed = true;
         ApplyInput();
     }
-
     private void OnBlockCanceled(InputAction.CallbackContext context)
     {
         m_BlockPressed = false;
         ApplyInput();
     }
 
+    private void OnLockOnPerformed(InputAction.CallbackContext context)
+    {
+        m_IsLockOnTarget = !m_IsLockOnTarget;
+        m_CharacterStateController.CharacterAnimator.SetBool("IsLockOnTarget", m_IsLockOnTarget);
+        if (m_IsLockOnTarget)
+        {
+            m_VcamLockOnTarget.Priority = 20;
+            m_VcamNormal.Priority = 10;
+        }
+        else
+        {
+            m_VcamLockOnTarget.Priority = 10;
+            m_VcamNormal.Priority = 20;
+        }
+    }
+
     public override bool IsEnemy(CharacterController other) => other is AIController;
 
-    /// <summary>
-    /// 현재 입력값을 StateController에 전달
-    /// </summary>
     private void ApplyInput()
     {
         m_CharacterStateController.SetInput(
             m_MoveInput,
-            m_AttackPressed,
+            false, // 공격 입력은 큐에서 관리하므로 false로
             m_ParryPressed,
             m_BlockPressed
         );

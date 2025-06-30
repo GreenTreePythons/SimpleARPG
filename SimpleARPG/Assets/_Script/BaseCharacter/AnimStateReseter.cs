@@ -1,10 +1,13 @@
 using UnityEngine;
 
-public class AttackStateReseter : StateMachineBehaviour
+public class AnimStateReseter : StateMachineBehaviour
 {
+    [SerializeField] string ResetTriggerName;
+
     public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateExit(animator, stateInfo, layerIndex);
-        animator.ResetTrigger("Attack");
+        
+        if (ResetTriggerName != null) animator.ResetTrigger(ResetTriggerName);
     }
 }

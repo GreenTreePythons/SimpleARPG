@@ -2,7 +2,7 @@ using UnityEngine;
 
 public enum CharacterState
 {
-    Idle, Move, Attack1, Attack2, Attack3, Parry, Block, Damaged, Dead
+    Idle, Move, LightAttack, HeavyAttack, Parry, Block, Damaged, Dead
 }
 
 public interface ICharacterState
@@ -24,17 +24,11 @@ public class IdleState : ICharacterState
     private CharacterStateController m_Controller;
     public IdleState(CharacterStateController c) { m_Controller = c; }
 
-    public void EnterState()
-    {
-        Debug.Log("Enter Idle State");
-        m_Controller.CharacterAnimator.SetBool("IsMoving", false);
-    }
+    public void EnterState() { m_Controller.CharacterAnimator.SetBool("IsMoving", false); }
     public void HandleInput()
     {
         if (m_Controller.MoveInput.magnitude > 0)
             m_Controller.ChangeState(m_Controller.MovingState);
-        else if (m_Controller.AttackPressed)
-            m_Controller.ChangeState(m_Controller.Attack1State);
         else if (m_Controller.ParryPressed)
             m_Controller.ChangeState(m_Controller.ParryState);
         else if (m_Controller.BlockPressed)
@@ -42,12 +36,9 @@ public class IdleState : ICharacterState
     }
     public void UpdateState() { }
     public CharacterState GetState() => CharacterState.Idle;
-
-    public void ExitState()
-    {
-        
-    }
+    public void ExitState() { }
 }
+
 
 public class MovingState : ICharacterState
 {
@@ -61,9 +52,7 @@ public class MovingState : ICharacterState
     }
     public void HandleInput()
     {
-        if (m_Controller.AttackPressed)
-            m_Controller.ChangeState(m_Controller.Attack1State);
-        else if (m_Controller.ParryPressed)
+        if (m_Controller.ParryPressed)
             m_Controller.ChangeState(m_Controller.ParryState);
         else if (m_Controller.BlockPressed)
             m_Controller.ChangeState(m_Controller.BlockState);
@@ -72,168 +61,39 @@ public class MovingState : ICharacterState
     }
     public void UpdateState() { }
     public CharacterState GetState() => CharacterState.Move;
-
-    public void ExitState()
-    {
-
-    }
+    public void ExitState() { }
 }
 
-public class Attack1State : ICharacterState, IStateTimer
+public class LightAttackState : ICharacterState
 {
     private CharacterStateController m_Controller;
-    private bool m_NextComboQueued;
-
-    public float CurrentStateTime { get; private set; }
-
-    public Attack1State(CharacterStateController c) { m_Controller = c; }
-
-    public void EnterState()
-    {
-        Debug.Log($"Enter Attack1State");
-        CurrentStateTime = 0;
-        m_NextComboQueued = false;
-
-        m_Controller.CharacterController.EnableWeaponHitBox();
-
-        m_Controller.CharacterAnimator.SetInteger("AttackComboCount", 1);
-        m_Controller.CharacterAnimator.SetTrigger("Attack");
-    }
-
-    public void HandleInput()
-    {
-        if (m_Controller.MoveInput.magnitude > 0)
-        {
-            m_Controller.ChangeState(m_Controller.MovingState);
-            return;
-        }
-
-        var animState = m_Controller.CharacterAnimator.GetCurrentAnimatorStateInfo(0);
-        if (m_Controller.AttackPressed && animState.normalizedTime > 0.2f)
-        {
-            m_NextComboQueued = true;
-        }
-    }
-
+    public LightAttackState(CharacterStateController controller, int comboIndex = 1) { m_Controller = controller; }
+    public void EnterState() { m_Controller.CharacterController.EnableWeaponHitBox(); }
+    public void HandleInput() {  }
     public void UpdateState()
     {
-        CurrentStateTime += Time.deltaTime;
         var animState = m_Controller.CharacterAnimator.GetCurrentAnimatorStateInfo(0);
-
-        if (animState.normalizedTime > 0.7f)
-        {
-            if (m_NextComboQueued)
-                m_Controller.ChangeState(m_Controller.Attack2State);
-        }
-
-        if (CurrentStateTime > 5.0f || animState.normalizedTime >= 0.95f)
+        if (animState.normalizedTime > 0.95f)
             m_Controller.ChangeState(m_Controller.IdleState);
     }
-
-    public CharacterState GetState() => CharacterState.Attack1;
-
-    public void ExitState()
-    {
-        m_Controller.CharacterController.DisableWeaponHitBox();
-    }
+    public void ExitState() { m_Controller.CharacterController.DisableWeaponHitBox(); }
+    public CharacterState GetState() => CharacterState.LightAttack;
 }
 
-public class Attack2State : ICharacterState, IStateTimer
+public class HeavyAttackState : ICharacterState
 {
     private CharacterStateController m_Controller;
-    private bool m_NextComboQueued;
-
-    public float CurrentStateTime { get; private set; }
-    public Attack2State(CharacterStateController c) { m_Controller = c; }
-
-    public void EnterState()
-    {
-        Debug.Log($"Enter Attack2State");
-        CurrentStateTime = 0f;
-        m_NextComboQueued = false;
-        m_Controller.CharacterController.EnableWeaponHitBox();
-        m_Controller.CharacterAnimator.SetInteger("AttackComboCount", 2);
-        m_Controller.CharacterAnimator.SetTrigger("Attack");
-    }
-    
-    public void HandleInput()
-    {
-        if (m_Controller.MoveInput.magnitude > 0)
-        {
-            m_Controller.ChangeState(m_Controller.MovingState);
-            return;
-        }
-
-        var animState = m_Controller.CharacterAnimator.GetCurrentAnimatorStateInfo(0);
-        if (m_Controller.AttackPressed && animState.normalizedTime > 0.2f)
-        {
-            m_NextComboQueued = true;
-        }
-    }
-
+    public HeavyAttackState(CharacterStateController controller, int comboIndex = 1) { m_Controller = controller; }
+    public void EnterState() { m_Controller.CharacterController.EnableWeaponHitBox(); }
+    public void HandleInput() {  }
     public void UpdateState()
     {
-        CurrentStateTime += Time.deltaTime;
         var animState = m_Controller.CharacterAnimator.GetCurrentAnimatorStateInfo(0);
-
-        if (animState.normalizedTime > 0.7f)
-        {
-            if (m_NextComboQueued)
-                m_Controller.ChangeState(m_Controller.Attack3State);
-        }
-
-        if (CurrentStateTime > 5.0f || animState.normalizedTime >= 0.95f)
-            m_Controller.ChangeState(m_Controller.IdleState);
-
-    }
-
-    public CharacterState GetState() => CharacterState.Attack2;
-
-    public void ExitState()
-    {
-        m_Controller.CharacterController.DisableWeaponHitBox();
-    }
-}
-
-public class Attack3State : ICharacterState, IStateTimer
-{
-    private CharacterStateController m_Controller;
-    public float CurrentStateTime { get; private set; }
-    public Attack3State(CharacterStateController c) { m_Controller = c; }
-
-    public void EnterState()
-    {
-        Debug.Log($"Enter Attack3State");
-        CurrentStateTime = 0f;
-        m_Controller.CharacterController.EnableWeaponHitBox();
-        m_Controller.CharacterAnimator.SetInteger("AttackComboCount", 3);
-        m_Controller.CharacterAnimator.SetTrigger("Attack");
-    }
-    
-    public void HandleInput()
-    {
-        if (m_Controller.MoveInput.magnitude > 0)
-        {
-            m_Controller.ChangeState(m_Controller.MovingState);
-            return;
-        }
-    }
-
-    public void UpdateState()
-    {
-        CurrentStateTime += Time.deltaTime;
-        var animState = m_Controller.CharacterAnimator.GetCurrentAnimatorStateInfo(0);
-
-        if (CurrentStateTime > 5.0f || animState.normalizedTime >= 0.95f)
+        if (animState.normalizedTime > 0.95f)
             m_Controller.ChangeState(m_Controller.IdleState);
     }
-
-    public CharacterState GetState() => CharacterState.Attack3;
-
-    public void ExitState()
-    {
-        m_Controller.CharacterController.DisableWeaponHitBox();
-    }
+    public void ExitState() { m_Controller.CharacterController.DisableWeaponHitBox(); }
+    public CharacterState GetState() => CharacterState.HeavyAttack;
 }
 
 public class ParryState : ICharacterState
@@ -255,7 +115,7 @@ public class ParryState : ICharacterState
 
     public void ExitState()
     {
-        
+
     }
 }
 
