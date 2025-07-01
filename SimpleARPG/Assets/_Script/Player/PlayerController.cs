@@ -1,3 +1,4 @@
+using System.Collections;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -5,24 +6,25 @@ using UnityEngine.InputSystem;
 public class PlayerController : CharacterController
 {
     [SerializeField] Transform m_PlayerRoot;
-    [SerializeField] private CinemachineCamera m_VcamNormal;
-    [SerializeField] private CinemachineCamera m_VcamLockOnTarget;
+    [SerializeField] CinemachineCamera m_NormalCamera;
+    [SerializeField] CinemachineCamera m_LockOnCamera;
 
     private InputSystemActions m_InputActions;
-    private CharacterStateController m_CharacterStateController;
-    private CharacterAttackController m_CharacterAttackController;
+    private CharacterStateController m_StateController;
+    private CharacterAttackController m_AttackController;
 
     private Vector2 m_MoveInput = Vector2.zero;
     private bool m_ParryPressed = false;
     private bool m_BlockPressed = false;
     private bool m_IsLockOnTarget = false;
+    private Coroutine m_CoLockOnRotate;
 
     protected override void Awake()
     {
         base.Awake();
         m_InputActions = new InputSystemActions();
-        m_CharacterStateController = GetComponent<CharacterStateController>();
-        m_CharacterAttackController = GetComponent<CharacterAttackController>();
+        m_StateController = GetComponent<CharacterStateController>();
+        m_AttackController = GetComponent<CharacterAttackController>();
     }
 
     void Update()
@@ -50,13 +52,15 @@ public class PlayerController : CharacterController
         }
     }
 
+    private CinemachineCamera GetCurrentCamera() => m_IsLockOnTarget ? m_LockOnCamera : m_NormalCamera;
+
     private void OnEnable()
     {
         m_InputActions.Player.Move.performed += OnMovePerformed;
         m_InputActions.Player.Move.canceled += OnMoveCanceled;
 
         m_InputActions.Player.LightAttack.performed += OnLightAtackPerformed;
-        m_InputActions.Player.HeavyAttack.performed += OnHeavyAtackPerformed;
+        // m_InputActions.Player.HeavyAttack.performed += OnHeavyAtackPerformed;
 
         m_InputActions.Player.Parry.performed += OnParryPerformed;
         m_InputActions.Player.Parry.canceled += OnParryCanceled;
@@ -88,12 +92,12 @@ public class PlayerController : CharacterController
 
     private void OnLightAtackPerformed(InputAction.CallbackContext context)
     {
-        m_CharacterAttackController.EnqueueAttackInput(AttackType.Light);
+        m_AttackController.EnqueueAttackInput(AttackType.Light);
     }
 
     private void OnHeavyAtackPerformed(InputAction.CallbackContext context)
     {
-        m_CharacterAttackController.EnqueueAttackInput(AttackType.Heavy);
+        m_AttackController.EnqueueAttackInput(AttackType.Heavy);
     }
 
     private void OnParryPerformed(InputAction.CallbackContext context)
@@ -121,24 +125,47 @@ public class PlayerController : CharacterController
     private void OnLockOnPerformed(InputAction.CallbackContext context)
     {
         m_IsLockOnTarget = !m_IsLockOnTarget;
-        m_CharacterStateController.CharacterAnimator.SetBool("IsLockOnTarget", m_IsLockOnTarget);
+        m_StateController.CharacterAnimator.SetBool("IsLockOnTarget", m_IsLockOnTarget);
+        
         if (m_IsLockOnTarget)
         {
-            m_VcamLockOnTarget.Priority = 20;
-            m_VcamNormal.Priority = 10;
+            m_LockOnCamera.Priority = 20;
+            m_NormalCamera.Priority = 10;
+
+            // if (m_CoLockOnRotate != null) StopCoroutine(m_CoLockOnRotate);
+            // m_CoLockOnRotate = StartCoroutine(LockOnRotateCoroutine(m_EnemyDetector.GetNearestEnemy()));
         }
         else
         {
-            m_VcamLockOnTarget.Priority = 10;
-            m_VcamNormal.Priority = 20;
+            m_LockOnCamera.Priority = 10;
+            m_NormalCamera.Priority = 20;
+
+            // if (m_CoLockOnRotate != null) StopCoroutine(m_CoLockOnRotate);
         }
+    }
+
+    private IEnumerator LockOnRotateCoroutine(CharacterController enemy)
+    {
+        if (enemy == null) yield break;
+
+        Quaternion startRotation = transform.rotation;
+        Vector3 lookDir = enemy.transform.position - transform.position;
+        Quaternion targetRotation = Quaternion.LookRotation(lookDir.normalized, Vector3.up);
+
+        while (m_IsLockOnTarget)
+        {
+            transform.rotation = Quaternion.Slerp(startRotation, targetRotation, Time.deltaTime);
+            yield return null;
+        }
+        transform.rotation = targetRotation;
+        m_CoLockOnRotate = null;
     }
 
     public override bool IsEnemy(CharacterController other) => other is AIController;
 
     private void ApplyInput()
     {
-        m_CharacterStateController.SetInput(
+        m_StateController.SetInput(
             m_MoveInput,
             false, // 공격 입력은 큐에서 관리하므로 false로
             m_ParryPressed,

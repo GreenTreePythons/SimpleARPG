@@ -14,25 +14,28 @@ public abstract class CharacterController : MonoBehaviour, IWeaponController
     [SerializeField] protected float m_BattleMoveSpeed = 2.0f;
     [SerializeField] protected float m_NormalMoveSpeed = 7.0f;
 
-    [SerializeField] SwordController m_SwordController;
+    // [SerializeField] SwordController m_SwordController;
     [SerializeField] HPBarUI m_HPBar;
+    [SerializeField] CharacterEnemyDetector m_Detector;
 
     protected float m_CurrentHp;
+    protected CharacterEnemyDetector m_EnemyDetector;
 
     protected virtual void Awake()
     {
         m_CurrentHp = m_MaxHp;
         HPBarUIManager.Instance?.Register(this);
+        m_EnemyDetector = m_Detector;
     }
 
     public virtual void EnableWeaponHitBox()
     {
-        m_SwordController.EnableHitBox();
+        // m_SwordController.EnableHitBox();
     }
 
     public virtual void DisableWeaponHitBox()
     {
-        m_SwordController.DisableHitBox();
+        // m_SwordController.DisableHitBox();
     }
 
     public virtual void ApplyDamage(float damage)

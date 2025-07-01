@@ -43,28 +43,24 @@ public class CharacterAttackController : MonoBehaviour
     {
         if (!m_IsAttacking) return;
 
-        var stateInfo = m_Animator.GetCurrentAnimatorStateInfo(0);
+        if (m_AttackInputQueue.Count <= 0) return;
 
-        if (m_AttackInputQueue.Count > 0)
+        var input = m_AttackInputQueue.Dequeue();
+        if (input.type == m_CurrentAttackType && m_CurrentComboIndex < m_MaxComboCount[input.type] + 1)
         {
-            var input = m_AttackInputQueue.Dequeue();
-
-            if (input.type == m_CurrentAttackType && m_CurrentComboIndex < m_MaxComboCount[input.type] + 1)
-            {
-                m_CurrentComboIndex++;
-            }
-            else
-            {
-                m_CurrentAttackType = input.type;
-                m_CurrentComboIndex = 1;
-            }
-
-            m_Animator.SetTrigger("Attack");
-            m_Animator.SetInteger("AttackType", (int)m_CurrentAttackType);
-            m_Animator.SetInteger("AttackIndex", m_CurrentComboIndex);
+            m_CurrentComboIndex++;
+        }
+        else
+        {
+            m_CurrentAttackType = input.type;
+            m_CurrentComboIndex = 1;
         }
 
-        if (IsAttackAnimationEnd(stateInfo))
+        m_Animator.SetTrigger("Attack");
+        m_Animator.SetInteger("AttackType", (int)m_CurrentAttackType);
+        m_Animator.SetInteger("AttackIndex", m_CurrentComboIndex);
+
+        if (IsAttackAnimationEnd(m_Animator.GetCurrentAnimatorStateInfo(0)))
         {
             EndAttack();
         }
@@ -73,7 +69,7 @@ public class CharacterAttackController : MonoBehaviour
     public void EnqueueAttackInput(AttackType type)
     {
         m_AttackInputQueue.Enqueue(new AttackInput { type = type, frame = Time.frameCount });
-
+        Debug.Log($"EnqueueAttackInput : {type} requested ({m_AttackInputQueue.Count})");
         if (!m_IsAttacking)
             StartAttack(type);
     }
@@ -104,12 +100,12 @@ public class CharacterAttackController : MonoBehaviour
     private bool IsAttackAnimationEnd(AnimatorStateInfo stateInfo) =>  stateInfo.IsTag("Attack") && stateInfo.normalizedTime > 0.95f;
 
     // 히트박스 활성/비활성화 등은 AnimationEvent로 m_CharacterController 호출
-    public void EnableWeaponHitBox()
-    {
-        m_CharacterController.EnableWeaponHitBox();
-    }
-    public void DisableWeaponHitBox()
-    {
-        m_CharacterController.DisableWeaponHitBox();
-    }
+    // public void EnableWeaponHitBox()
+    // {
+    //     m_CharacterController.EnableWeaponHitBox();
+    // }
+    // public void DisableWeaponHitBox()
+    // {
+    //     m_CharacterController.DisableWeaponHitBox();
+    // }
 }
