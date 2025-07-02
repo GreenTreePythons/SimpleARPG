@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class AIController
+public class AIController : MonoBehaviour
 {
     
 }

@@ -35,6 +35,11 @@ public class CharacterFSMStatesController : MonoBehaviour
     private CharacterAnimationController m_AnimController;
     
     private Dictionary<CharacterStateType, CharacterStateBase> m_States;
+    
+    // for debug ui
+    public int CurrentComboStep;
+    public float ComboTimer;
+    public bool NextComboQueued;
 
     private void Awake()
     {
@@ -74,7 +79,10 @@ public class CharacterFSMStatesController : MonoBehaviour
         if (allowedTransitions.HasFlag(TransitionType.Attack))
         {
             if (inputManager.IsLightAttackInput || inputManager.IsHeavyAttackInput)
+            {
+                ChangeState(CharacterStateType.Attacking);
                 return;
+            }
         }
         if (allowedTransitions.HasFlag(TransitionType.Move) && IsMoving())
         {
@@ -89,8 +97,8 @@ public class CharacterFSMStatesController : MonoBehaviour
     }
 
     public AttackComboInfo[] GetComboDatas(ComboType comboType) => m_AttackComboDatas.GetComboData(comboType).GetAttackComboInfos();
-    
-    public bool IsMoving() => GameManager.Instance.InputManager.IsMoving;
+
+    public bool IsMoving() => GameManager.Instance.InputManager.MoveDirection.sqrMagnitude > 0.01f;
 
     private void OnDisable() { }
 }

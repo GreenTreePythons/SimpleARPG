@@ -5,13 +5,13 @@ public class InputManager : MonoBehaviour
     private InputSystemActions m_InputActions;
     
     public Vector2 MoveDirection { get; private set; }
+    public bool MoveInputPressed { get; set; }
+    
     public Vector2 CameraRotateInput { get; private set; }
 
     public bool IsLightAttackInput { get; private set; } = false;
     public bool IsHeavyAttackInput { get; private set; } = false;    
     public ComboType LatestComboTypeInput { get; private set; } = ComboType.None;
-    
-    public bool IsMoving { get; private set; } = false;
 
     private void Awake()
     {
@@ -23,13 +23,14 @@ public class InputManager : MonoBehaviour
         m_InputActions.Player.Move.performed += move =>
         {
             MoveDirection = move.ReadValue<Vector2>();
-            IsMoving = MoveDirection.magnitude > 0.01f;
+            MoveInputPressed = true;
         };
         m_InputActions.Player.Move.canceled += move =>
         {
             MoveDirection = Vector2.zero;
-            IsMoving = false;
+            MoveInputPressed = false;
         };
+        
         m_InputActions.Player.CameraRotate.performed += rotate => CameraRotateInput = rotate.ReadValue<Vector2>();
         m_InputActions.Player.CameraRotate.canceled += rotate => CameraRotateInput = Vector2.zero;
         
