@@ -19,10 +19,8 @@ public class CharacterEnemyDetector : MonoBehaviour
         var characterController = other.GetComponent<CharacterController>();
 
         if (characterController == null) return;
-        if (characterController.IsDead()) return;
-        if (!m_Owner.IsEnemy(characterController)) return;
 
-        m_DetectedEnemies.Add(characterController);
+         m_DetectedEnemies.Add(characterController);
     }
 
     private void OnTriggerExit(Collider other)

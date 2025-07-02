@@ -25,13 +25,7 @@ public class SwordController : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         // 피격 대상 중복 방지
-        if (m_HitTargets.Contains(other)) return;
-
-        if (!other.TryGetComponent<CharacterStateController>(out CharacterStateController stateController)) return;
-
-        var targetCharCtrl = stateController.CharacterController;
-
-        if (!m_CharacterController.IsEnemy(targetCharCtrl)) return;
+        if (m_HitTargets.Contains(other)) return;;
 
         m_HitTargets.Add(other);
         // stateController.OnDamaged(transform.position, m_KnockbackForce, m_DamagedDuration, m_CharacterController.GetStatValue(CharacterStat.Strong));

@@ -78,24 +78,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Parry",
-                    "type": "Button",
-                    "id": "6f9d9ca6-e4c1-4ebd-8281-d2549f30f207",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Block",
-                    "type": "Button",
-                    "id": "ae4bc16b-bd34-46ab-8eef-4aa4ccae6ffd",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "LockOnTarget",
                     "type": "Button",
                     "id": "3ddce8af-3758-4241-aa0c-e88483d2f000",
@@ -111,6 +93,24 @@
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "HeavyAttack",
+                    "type": "Button",
+                    "id": "ef265296-fe0d-4213-a2ad-1cfa561d6ad5",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "CameraRotate",
+                    "type": "Button",
+                    "id": "36928578-cbd7-4d54-907b-24a6db46f996",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "Press",
                     "initialStateCheck": false
                 }
             ],
@@ -451,8 +451,30 @@
                     "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Keyboard&Mouse",
                     "action": "LightAttack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8577a6a1-dd71-4e93-a3e6-402889145cbe",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "CameraRotate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8105dd41-b574-486f-b901-5aa8e4bf3265",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "HeavyAttack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

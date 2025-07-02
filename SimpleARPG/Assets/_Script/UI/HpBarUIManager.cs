@@ -22,7 +22,6 @@ public class HPBarUIManager : MonoBehaviour
 
         var hpBar = Instantiate(m_HpBarPrefab, m_Canvas.transform);
         m_HpBarMap[target] = hpBar;
-        hpBar.SetHP(target.GetCurrentHp(), target.GetStatValue(CharacterStat.HP));
 
         if (target is PlayerController)
             hpBar.SetPivot(1f);  // 오른쪽
@@ -40,7 +39,6 @@ public class HPBarUIManager : MonoBehaviour
     public void UpdateHP(CharacterController target)
     {
         if (!m_HpBarMap.TryGetValue(target, out var bar)) return;
-        bar.SetHP(target.GetCurrentHp(), target.GetStatValue(CharacterStat.HP));
     }
 
     void LateUpdate()
