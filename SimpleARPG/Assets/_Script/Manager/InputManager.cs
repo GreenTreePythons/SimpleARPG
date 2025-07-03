@@ -5,13 +5,14 @@ public class InputManager : MonoBehaviour
     private InputSystemActions m_InputActions;
     
     public Vector2 MoveDirection { get; private set; }
-    public bool MoveInputPressed { get; set; }
-    
-    public Vector2 CameraRotateInput { get; private set; }
 
     public bool IsLightAttackInput { get; private set; } = false;
     public bool IsHeavyAttackInput { get; private set; } = false;    
     public ComboType LatestComboTypeInput { get; private set; } = ComboType.None;
+    
+    public bool IsLockOnTarget { get; private set; } = false;
+    
+    public Vector2 LookDirection { get; private set; } = Vector2.zero;
 
     private void Awake()
     {
@@ -23,16 +24,11 @@ public class InputManager : MonoBehaviour
         m_InputActions.Player.Move.performed += move =>
         {
             MoveDirection = move.ReadValue<Vector2>();
-            MoveInputPressed = true;
         };
         m_InputActions.Player.Move.canceled += move =>
         {
             MoveDirection = Vector2.zero;
-            MoveInputPressed = false;
         };
-        
-        m_InputActions.Player.CameraRotate.performed += rotate => CameraRotateInput = rotate.ReadValue<Vector2>();
-        m_InputActions.Player.CameraRotate.canceled += rotate => CameraRotateInput = Vector2.zero;
         
         m_InputActions.Player.LightAttack.performed += intput =>
         {
@@ -54,6 +50,14 @@ public class InputManager : MonoBehaviour
             IsHeavyAttackInput = false;
             LatestComboTypeInput = ComboType.None;
         };
+
+        m_InputActions.Player.LockOnTarget.performed += intput =>
+        {
+            IsLockOnTarget = !IsLockOnTarget;
+        };
+        
+        m_InputActions.Player.Look.performed += intput => LookDirection = intput.ReadValue<Vector2>();
+        m_InputActions.Player.Look.canceled += intput => LookDirection = Vector2.zero;
         
         m_InputActions.Enable();
     }

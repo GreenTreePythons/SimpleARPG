@@ -28,6 +28,6 @@ public class CharacterStateDebugGUI : MonoBehaviour
         GUI.Label(new Rect(10, 40, 400, 40), $"Current ComboStep: {m_StateController.CurrentComboStep}", style);
         GUI.Label(new Rect(10, 70, 400, 40), $"Current ComboTimer: {m_StateController.ComboTimer}", style);
         GUI.Label(new Rect(10, 100, 400, 40), $"NextComboQueued: {m_StateController.NextComboQueued}", style);
-        GUI.Label(new Rect(10, 130, 400, 40), $"m_Angle: {m_AnimationController.m_Angle}", style);
+        GUI.Label(new Rect(10, 130, 400, 40), $"LockOnTarget: {GameManager.Instance.InputManager.IsLockOnTarget}", style);
     }
 }

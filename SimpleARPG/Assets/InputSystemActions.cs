@@ -189,15 +189,6 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""CameraRotate"",
-                    ""type"": ""Button"",
-                    ""id"": ""36928578-cbd7-4d54-907b-24a6db46f996"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": ""Press"",
-                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -526,7 +517,7 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
                     ""path"": ""<Keyboard>/leftCtrl"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Keyboard&Mouse"",
                     ""action"": ""LockOnTarget"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -539,17 +530,6 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";Keyboard&Mouse"",
                     ""action"": ""LightAttack"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""8577a6a1-dd71-4e93-a3e6-402889145cbe"",
-                    ""path"": ""<Mouse>/rightButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Keyboard&Mouse"",
-                    ""action"": ""CameraRotate"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -1159,7 +1139,6 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
         m_Player_LockOnTarget = m_Player.FindAction("LockOnTarget", throwIfNotFound: true);
         m_Player_LightAttack = m_Player.FindAction("LightAttack", throwIfNotFound: true);
         m_Player_HeavyAttack = m_Player.FindAction("HeavyAttack", throwIfNotFound: true);
-        m_Player_CameraRotate = m_Player.FindAction("CameraRotate", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1264,7 +1243,6 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_LockOnTarget;
     private readonly InputAction m_Player_LightAttack;
     private readonly InputAction m_Player_HeavyAttack;
-    private readonly InputAction m_Player_CameraRotate;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -1320,10 +1298,6 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/HeavyAttack".
         /// </summary>
         public InputAction @HeavyAttack => m_Wrapper.m_Player_HeavyAttack;
-        /// <summary>
-        /// Provides access to the underlying input action "Player/CameraRotate".
-        /// </summary>
-        public InputAction @CameraRotate => m_Wrapper.m_Player_CameraRotate;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1383,9 +1357,6 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
             @HeavyAttack.started += instance.OnHeavyAttack;
             @HeavyAttack.performed += instance.OnHeavyAttack;
             @HeavyAttack.canceled += instance.OnHeavyAttack;
-            @CameraRotate.started += instance.OnCameraRotate;
-            @CameraRotate.performed += instance.OnCameraRotate;
-            @CameraRotate.canceled += instance.OnCameraRotate;
         }
 
         /// <summary>
@@ -1430,9 +1401,6 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
             @HeavyAttack.started -= instance.OnHeavyAttack;
             @HeavyAttack.performed -= instance.OnHeavyAttack;
             @HeavyAttack.canceled -= instance.OnHeavyAttack;
-            @CameraRotate.started -= instance.OnCameraRotate;
-            @CameraRotate.performed -= instance.OnCameraRotate;
-            @CameraRotate.canceled -= instance.OnCameraRotate;
         }
 
         /// <summary>
@@ -1810,13 +1778,6 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnHeavyAttack(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "CameraRotate" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnCameraRotate(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

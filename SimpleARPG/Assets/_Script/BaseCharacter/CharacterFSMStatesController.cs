@@ -33,6 +33,7 @@ public class CharacterFSMStatesController : MonoBehaviour
     
     private CharacterStateBase m_CurrentState;
     private CharacterAnimationController m_AnimController;
+    private CameraManager m_CameraManager;
     
     private Dictionary<CharacterStateType, CharacterStateBase> m_States;
     
@@ -44,6 +45,7 @@ public class CharacterFSMStatesController : MonoBehaviour
     private void Awake()
     {
         m_AnimController = GetComponent<CharacterAnimationController>();
+        m_CameraManager = GetComponent<PlayerController>().GetCameraManager();
 
         m_States = new Dictionary<CharacterStateType, CharacterStateBase>
         {
@@ -99,6 +101,8 @@ public class CharacterFSMStatesController : MonoBehaviour
     public AttackComboInfo[] GetComboDatas(ComboType comboType) => m_AttackComboDatas.GetComboData(comboType).GetAttackComboInfos();
 
     public bool IsMoving() => GameManager.Instance.InputManager.MoveDirection.sqrMagnitude > 0.01f;
+    
+    public CameraManager GetCameraManager() => m_CameraManager;
 
     private void OnDisable() { }
 }

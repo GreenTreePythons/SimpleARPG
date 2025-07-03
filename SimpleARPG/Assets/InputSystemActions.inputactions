@@ -103,15 +103,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
-                },
-                {
-                    "name": "CameraRotate",
-                    "type": "Button",
-                    "id": "36928578-cbd7-4d54-907b-24a6db46f996",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "Press",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -440,7 +431,7 @@
                     "path": "<Keyboard>/leftCtrl",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Keyboard&Mouse",
                     "action": "LockOnTarget",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -453,17 +444,6 @@
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "LightAttack",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "8577a6a1-dd71-4e93-a3e6-402889145cbe",
-                    "path": "<Mouse>/rightButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "CameraRotate",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
