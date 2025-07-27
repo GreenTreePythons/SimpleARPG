@@ -3,9 +3,9 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private Transform m_LockOnTargetEnemy;
     [SerializeField] CameraManager m_CameraManager;
-
+    
+    private Transform m_LockOnTargetEnemy;
     private bool m_IsCameraModeUpdated = false;
 
     private void Start()
