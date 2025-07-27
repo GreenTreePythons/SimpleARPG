@@ -24,7 +24,6 @@ public class SwordController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // 피격 대상 중복 방지
         if (m_HitTargets.Contains(other)) return;;
 
         m_HitTargets.Add(other);

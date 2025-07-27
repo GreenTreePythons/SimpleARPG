@@ -10,14 +10,13 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        m_CameraManager.SetPlayer(this.transform); // 최초 1회만 세팅
+        m_CameraManager.SetPlayer(this.transform);
         m_CameraManager.SwitchToNormalCamera();
     }
 
     private void Update()
     {
         HandleCameraSwitchInput();
-        // (이동, 공격 등 다른 처리)
     }
 
     private void HandleCameraSwitchInput()

@@ -42,38 +42,6 @@ public class CharacterIdleState : CharacterStateBase
 }
 
 // Moving State
-// public class CharacterMovingState : CharacterStateBase
-// {
-//     public CharacterMovingState(CharacterFSMStatesController controller, CharacterAnimationController animController)
-//         : base(controller, animController) { }
-//
-//     public override void OnEnter()
-//     {
-//         base.OnEnter();
-//     }
-//
-//     public override void Update()
-//     {
-//         base.Update();
-//         var m_InputDir = GameManager.Instance.InputManager.MoveDirection;
-//         m_AnimController.PlayWalking(m_InputDir);
-//         
-//         m_StateController.CheckStateTransition(TransitionType.Idle | TransitionType.Attack);
-//         
-//         var walkSpeed = m_StateController.WalkSpeed * Time.deltaTime;
-//         m_StateController.transform.position += m_StateController.transform.forward * walkSpeed;
-//         
-//         Vector3 inputDirection = new Vector3(m_InputDir.x, 0, m_InputDir.y).normalized;
-//         Quaternion targetRotation = Quaternion.LookRotation(inputDirection, Vector3.up);
-//         var rotateSpeed = m_StateController.RotationSpeed * Time.deltaTime;
-//         m_StateController.transform.rotation = Quaternion.Slerp(m_StateController.transform.rotation, targetRotation, rotateSpeed);
-//     }
-//     
-//     public override void OnExit()
-//     {
-//         base.OnExit();
-//     }
-// }
 public class CharacterMovingState : CharacterStateBase
 {
     public CharacterMovingState(CharacterFSMStatesController controller, CharacterAnimationController animController)

@@ -47,11 +47,9 @@ public class HPBarUIManager : MonoBehaviour
         {
             var target = pair.Key;
             var hpBar = pair.Value;
-            // 월드좌표 -> 스크린좌표 변환
-            Vector3 worldPos = target.transform.position + Vector3.up * 2.2f; // 캐릭터 머리 위, 필요시 조정
+            Vector3 worldPos = target.transform.position + Vector3.up * 2.2f;
             Vector3 screenPos = Camera.main.WorldToScreenPoint(worldPos);
             hpBar.SetScreenPosition(screenPos);
-            // 화면 바깥이면 끄기 등 추가 가능
         }
     }
 }

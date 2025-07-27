@@ -35,7 +35,6 @@ public class CameraManager : MonoBehaviour
         m_LockOnCameraController.SetPlayer(playerTrans);
     }
 
-    // 적이 바뀔 때만 세팅
     public void SetLockOnTarget(Transform enemyTrans)
     {
         LockOnTarget = enemyTrans;
@@ -50,7 +49,6 @@ public class CameraManager : MonoBehaviour
 
     public void SwitchToLockOnCamera()
     {
-        // LockOn 진입시에도 Normal의 Yaw/Pitch 상태를 참고하려면 확장 가능
         SetCameraMode(m_LockOnCameraController);
     }
 
