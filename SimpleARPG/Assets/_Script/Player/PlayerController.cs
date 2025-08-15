@@ -2,14 +2,14 @@ using System;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
-{
-    [SerializeField] CameraManager m_CameraManager;
-    
+{   
     private Transform m_LockOnTargetEnemy;
     private bool m_IsCameraModeUpdated = false;
+    private CameraManager m_CameraManager;
 
     private void Start()
     {
+        m_CameraManager = GameManager.Instance.CameraManager;
         m_CameraManager.SetPlayer(this.transform);
         m_CameraManager.SwitchToNormalCamera();
     }
@@ -37,6 +37,4 @@ public class PlayerController : MonoBehaviour
             m_IsCameraModeUpdated = isLockOn;
         }
     }
-    
-    public CameraManager GetCameraManager() => m_CameraManager;
 }

@@ -52,6 +52,8 @@ public class CameraManager : MonoBehaviour
         SetCameraMode(m_LockOnCameraController);
     }
 
+    public Transform GetTransform() => this.transform;
+
     private void SetCameraMode(ICameraMode mode)
     {
         if (m_CurrentCameraMode == mode) return;

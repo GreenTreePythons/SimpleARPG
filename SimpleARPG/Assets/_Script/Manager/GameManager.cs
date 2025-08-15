@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 
 public class GameManager : MonoBehaviour
-{
+{   
     public static GameManager Instance { get; private set; }
 
     public InputManager InputManager { get; private set; }
+    public CameraManager CameraManager { get; private set; }
 
     private void Awake()
     {
@@ -13,6 +14,8 @@ public class GameManager : MonoBehaviour
 
         InputManager = new GameObject("InputManager").AddComponent<InputManager>();
         InputManager.transform.SetParent(this.transform);
+
+        CameraManager = FindObjectOfType<CameraManager>();;
     }
 
     public void PauseGame()

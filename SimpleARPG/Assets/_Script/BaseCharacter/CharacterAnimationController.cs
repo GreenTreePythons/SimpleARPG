@@ -8,8 +8,6 @@ public class CharacterAnimationController : MonoBehaviour
     private Animator m_Animator;
     private string m_CurrentStateName;
 
-    public float m_Angle;
-
     private void Awake()
     {
          m_Animator = this.GetComponent<Animator>();
@@ -78,8 +76,6 @@ public class CharacterAnimationController : MonoBehaviour
 
         float angle = Mathf.Atan2(input.x, input.y) * Mathf.Rad2Deg;
         if (angle < 0) angle += 360f;
-        
-        m_Angle = angle;
 
         if (angle >= 337.5f || angle < 22.5f)  return "Forward";
         if (angle >= 22.5f && angle < 67.5f)   return "ForwardRight";

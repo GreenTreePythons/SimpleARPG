@@ -58,9 +58,13 @@ public class CharacterMovingState : CharacterStateBase
 
         // 카메라 기준 이동 방향 변환
         Vector2 moveInput = GameManager.Instance.InputManager.MoveDirection;
-        Transform cam = m_StateController.GetPlayerController().GetCameraManager().transform;
-        Vector3 camForward = Vector3.Scale(cam.forward, new Vector3(1, 0, 1)).normalized;
-        Vector3 camRight = cam.right;
+        
+        // Transform cam = m_StateController.GetPlayerController().GetCameraManager().transform;
+        CameraManager cam = GameManager.Instance.CameraManager;
+        Transform camTransform = cam.transform;
+        
+        Vector3 camForward = Vector3.Scale(camTransform.forward, new Vector3(1, 0, 1)).normalized;
+        Vector3 camRight = camTransform.right;
 
         Vector3 moveDir = camForward * moveInput.y + camRight * moveInput.x;
         moveDir = moveDir.normalized;
@@ -75,10 +79,10 @@ public class CharacterMovingState : CharacterStateBase
         float rotateSpeed = m_StateController.RotationSpeed * Time.deltaTime;
 
         // LockOn 여부에 따라 회전 방식 분기
-        if (GameManager.Instance.InputManager.IsLockOnTarget && m_StateController.GetPlayerController().GetCameraManager().LockOnTarget != null)
+        if (GameManager.Instance.InputManager.IsLockOnTarget && cam.LockOnTarget != null)
         {
             // 록온: 적 방향으로만 회전
-            Vector3 lookDir = (m_StateController.GetPlayerController().GetCameraManager().LockOnTarget.position - m_StateController.transform.position).normalized;
+            Vector3 lookDir = (cam.LockOnTarget.position - m_StateController.transform.position).normalized;
             lookDir.y = 0;
             if (lookDir.sqrMagnitude > 0.001f)
             {
