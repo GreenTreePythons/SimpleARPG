@@ -1,10 +1,14 @@
 ﻿using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.Animations.Rigging;
 
 [RequireComponent(typeof(Animator))]
 public class CharacterAnimationController : MonoBehaviour
 {
+    [SerializeField] TwoBoneIKConstraint RightHandIK;
+    [SerializeField] TwoBoneIKConstraint LeftHandIK;
+    
     private Animator m_Animator;
     private string m_CurrentStateName;
 
@@ -19,8 +23,7 @@ public class CharacterAnimationController : MonoBehaviour
         m_CurrentStateName = "NormalIdle";
         m_Animator.CrossFade(m_CurrentStateName, 0.15f);
     }
-
-
+    
     public void PlayBattleIdle()
     {
         m_CurrentStateName = "BattleIdle";
@@ -86,5 +89,10 @@ public class CharacterAnimationController : MonoBehaviour
         if (angle >= 247.5f && angle < 292.5f) return "Left";
         if (angle >= 292.5f && angle < 337.5f) return "ForwardLeft";
         return "Forward";
+    }
+
+    private void AssignHandIK(TwoBoneIKConstraint rightHandIK, TwoBoneIKConstraint leftHandIK)
+    {
+        
     }
 }

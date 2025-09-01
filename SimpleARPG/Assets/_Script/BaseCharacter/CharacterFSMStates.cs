@@ -26,7 +26,8 @@ public class CharacterIdleState : CharacterStateBase
     public override void OnEnter()
     {
         base.OnEnter();
-        m_AnimController.PlayNormalIdle();
+        // m_AnimController.PlayNormalIdle();
+        m_AnimController.PlayBattleIdle();
     }
 
     public override void Update()
