@@ -2359,7 +2359,7 @@ MonoBehaviour:
   RunSpeed: 4
   SprintSpeed: 7
   RotationSpeed: 10
-  m_AttackComboDatas: {fileID: 11400000, guid: 5a7969c97d76d9e4fa44337448133ea5, type: 2}
+  m_AttackComboDatas: {fileID: 11400000, guid: 987afdd8729aa6f44ab15e715c798f99, type: 2}
   CurrentComboStep: 0
   ComboTimer: 0
   NextComboQueued: 0
@@ -4715,7 +4715,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ff5f286280e4b4d8e7e8f17829c14e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Offset: {x: 0, y: 2, z: -5}
+  Offset: {x: 0, y: 2, z: -5}
   m_MouseSensitivity: 0.1
   m_MinPitch: -30
   m_MaxPitch: 70

@@ -12,6 +12,7 @@ public class AttackComboDatas : ScriptableObject
     
     private void OnEnable()
     {
+        if (ComboDatas == null) return;
         foreach (var data in ComboDatas)
         {
             m_ComboDatas[data.GetComboType()] = data;
@@ -27,7 +28,7 @@ public class AttackComboDatas : ScriptableObject
 }
 
 [System.Serializable]
-public class AttackComboData 
+public class AttackComboData
 {
     [SerializeField] ComboType ComboType;
     [SerializeField] AttackComboInfo[] AttackComboInfos;
