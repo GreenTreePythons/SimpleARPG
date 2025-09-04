@@ -6,7 +6,7 @@
 4. Addresable
 
 ## DesingPattern
-### SingletonPattern
-### StatePattern
-### StrategyPattern
-### CommandPattern
+1. SingletonPattern
+2. StatePattern
+3. StrategyPattern
+4. CommandPattern
