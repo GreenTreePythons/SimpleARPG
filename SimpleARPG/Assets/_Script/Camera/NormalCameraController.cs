@@ -3,7 +3,7 @@ using UnityEngine.Serialization;
 
 public class NormalCameraController : MonoBehaviour, ICameraMode
 {
-    [SerializeField] private Vector3 m_Offset = new Vector3(0, 2, -5); // 기준 거리
+    [SerializeField] Vector3 Offset = new Vector3(0, 2, -5); // 기준 거리
     [SerializeField] private float m_MouseSensitivity = 3.0f;
     [SerializeField] private float m_MinPitch = -30f;
     [SerializeField] private float m_MaxPitch = 70f;
@@ -42,7 +42,7 @@ public class NormalCameraController : MonoBehaviour, ICameraMode
         m_Pitch = Mathf.Clamp(m_Pitch, m_MinPitch, m_MaxPitch);
 
         Quaternion rotation = Quaternion.Euler(m_Pitch, m_Yaw, 0);
-        Vector3 desiredPosition = m_PlayerTransform.position + rotation * m_Offset;
+        Vector3 desiredPosition = m_PlayerTransform.position + rotation * Offset;
 
         transform.position = Vector3.Lerp(transform.position, desiredPosition, 0.15f);
         transform.rotation = Quaternion.Lerp(transform.rotation, rotation, 0.15f);
