@@ -1,9 +1,10 @@
 # SimpleARPG
 ## 
 1. FSM
-2. LockOnCamera
-3. GrassShader
-4. Addresable
+2. Lockon camera system
+3. Combo attack system
+4. GrassShader
+5. Addresable
 
 ## DesingPattern
 1. SingletonPattern
