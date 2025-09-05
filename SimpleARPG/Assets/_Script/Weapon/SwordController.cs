@@ -1,168 +1,155 @@
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-#if UNITY_EDITOR
-[ExecuteAlways]
-#endif
-public class SwordController : MonoBehaviour
+/// 검의 CapsuleCollider를 기준으로 이동 경로에 '보이는' 캡슐 트리거를 간단히 생성
+/// - 프리미티브 캡슐(메쉬+Trigger) 사용 → 눈으로 바로 확인
+/// - 콜라이더의 월드 반경/높이/축을 반영
+public class SimpleSwordPathColliders_UsingCollider : MonoBehaviour
 {
-    [Header("Blade Points (root -> tip)")]
-    public Transform[] BladePoints;
+    [Header("Source Collider")]
+    [SerializeField] private CapsuleCollider m_SwordCollider;   // ★ 여기를 할당 (검에 붙은 CapsuleCollider)
 
-    [Header("Gizmo Settings")]
-    public bool DrawWhileIdle = true;              
-    public bool DrawSweptCapsules = true;          
-    public Color CurrentCapsuleColor = new Color(0.2f, 0.8f, 1f, 0.5f);
-    public Color SweptCapsuleColor = new Color(1f, 0.6f, 0.2f, 0.35f);
-    public float Radius = 0.03f;
+    [Header("Spawn Rule")]
+    [SerializeField] private float m_SpawnEveryMeters = 0.05f;  // 이 거리만큼 움직일 때마다 1개 생성
+    [SerializeField] private float m_LifetimeSeconds = 0.25f;   // 자동 파괴 시간
 
-    [Header("Runtime Debug Colliders (Optional)")]
-    public bool SpawnDebugTriggerColliders = false; 
-    public string DebugLayerName = "Ignore Raycast"; 
-    public float DespawnSeconds = 0.2f;              
+    [Header("Visuals")]
+    [SerializeField] private Color m_MarkerColor = new Color(0, 1, 1, 0.35f);
+    [SerializeField] private string m_DebugLayerName = "Ignore Raycast";
 
-    private Vector3[] m_PrevPoints;
-    private List<(Vector3 a, Vector3 b)> m_SweptSegments = new(); 
-    private bool m_InitedPrev;
-    private float m_TimeAccumulator;
+    // prev-center
+    private Vector3 m_PrevCenterWs;
+    private bool m_HasPrev;
 
     private void OnEnable()
     {
-        EnsurePrevBuffer();
-        CachePrevPoints();
+        m_HasPrev = false;
     }
 
     private void LateUpdate()
     {
-        if (BladePoints == null || BladePoints.Length < 2) return;
+        if (m_SwordCollider == null) return;
 
-        m_SweptSegments.Clear();
-        for (int i = 0; i < BladePoints.Length - 1; i++)
+        // 현재 CapsuleCollider의 월드 중심/반경/축방향 구하기
+        GetCapsuleWorld(m_SwordCollider, out Vector3 centerWs, out Vector3 axisDirWs, out float radiusWs, out float halfLine);
+
+        if (!m_HasPrev)
         {
-            Vector3 prevA = m_PrevPoints[i];
-            Vector3 prevB = m_PrevPoints[i + 1];
-            Vector3 currA = BladePoints[i].position;
-            Vector3 currB = BladePoints[i + 1].position;
-
-            Vector3 from = (prevA + prevB) * 0.5f;
-            Vector3 to   = (currA + currB) * 0.5f;
-
-            m_SweptSegments.Add((from, to));
-
-            if (SpawnDebugTriggerColliders && Application.isPlaying)
-            {
-                SpawnTempCapsuleTrigger(from, to, Radius);
-            }
+            m_PrevCenterWs = centerWs;
+            m_HasPrev = true;
+            return;
         }
 
-        for (int i = 0; i < BladePoints.Length; i++)
-            m_PrevPoints[i] = BladePoints[i].position;
+        Vector3 delta = centerWs - m_PrevCenterWs;
+        float dist = delta.magnitude;
+        if (dist < m_SpawnEveryMeters) return;
 
-        m_TimeAccumulator += Time.deltaTime;
-        if (m_TimeAccumulator > 3f)
+        int steps = Mathf.Max(1, Mathf.FloorToInt(dist / m_SpawnEveryMeters));
+        Vector3 stepDir = delta.normalized;
+
+        Vector3 from = m_PrevCenterWs;
+        for (int i = 0; i < steps; i++)
         {
-            m_TimeAccumulator = 0f;
-        }
-    }
-
-    private void EnsurePrevBuffer()
-    {
-        if (BladePoints == null) return;
-        if (m_PrevPoints == null || m_PrevPoints.Length != BladePoints.Length)
-            m_PrevPoints = new Vector3[BladePoints.Length];
-    }
-
-    private void CachePrevPoints()
-    {
-        if (BladePoints == null) return;
-        for (int i = 0; i < BladePoints.Length; i++)
-            m_PrevPoints[i] = BladePoints[i] ? BladePoints[i].position : transform.position;
-        m_InitedPrev = true;
-    }
-
-#if UNITY_EDITOR
-    private void OnDrawGizmos()
-    {
-        if (BladePoints == null || BladePoints.Length < 2) return;
-
-        if (!m_InitedPrev) { EnsurePrevBuffer(); CachePrevPoints(); }
-
-        Gizmos.color = CurrentCapsuleColor;
-        for (int i = 0; i < BladePoints.Length - 1; i++)
-        {
-            if (!BladePoints[i] || !BladePoints[i + 1]) continue;
-            DrawCapsuleGizmo(BladePoints[i].position, BladePoints[i + 1].position, Radius, DrawWhileIdle);
+            Vector3 to = (i == steps - 1) ? centerWs : from + stepDir * m_SpawnEveryMeters;
+            SpawnCapsuleMarker(from, to, radiusWs);
+            from = to;
         }
 
-        if (DrawSweptCapsules && m_SweptSegments.Count > 0)
-        {
-            Gizmos.color = SweptCapsuleColor;
-            for (int i = 0; i < m_SweptSegments.Count; i++)
-            {
-                var seg = m_SweptSegments[i];
-                DrawCapsuleGizmo(seg.a, seg.b, Radius, true);
-            }
-        }
+        m_PrevCenterWs = centerWs;
     }
 
-    private void DrawCapsuleGizmo(Vector3 a, Vector3 b, float r, bool draw)
-    {
-        if (!draw) return;
+    // == Helpers ==
 
-        Gizmos.DrawSphere(a, r);
-        Gizmos.DrawSphere(b, r);
-        
-        Gizmos.DrawLine(a + Vector3.right * r, b + Vector3.right * r);
-        Gizmos.DrawLine(a - Vector3.right * r, b - Vector3.right * r);
-        Gizmos.DrawLine(a + Vector3.up * r,    b + Vector3.up * r);
-        Gizmos.DrawLine(a - Vector3.up * r,    b - Vector3.up * r);
-        Gizmos.DrawLine(a + Vector3.forward * r, b + Vector3.forward * r);
-        Gizmos.DrawLine(a - Vector3.forward * r, b - Vector3.forward * r);
+    /// CapsuleCollider의 월드 속성 계산
+    private void GetCapsuleWorld(CapsuleCollider col, out Vector3 centerWs, out Vector3 axisDirWs, out float radiusWs, out float halfLine)
+    {
+        Transform t = col.transform;
+
+        // 콜라이더 로컬 기준값
+        Vector3 centerLs = col.center;
+        float radius = col.radius;
+        float height = Mathf.Max(col.height, radius * 2f);
+        int dir = col.direction; // 0=X, 1=Y, 2=Z (로컬축)
+
+        // 월드 변환 및 스케일 반영
+        Vector3 lossy = t.lossyScale;
+        float sx = Mathf.Abs(lossy.x);
+        float sy = Mathf.Abs(lossy.y);
+        float sz = Mathf.Abs(lossy.z);
+
+        // 반경은 콜라이더 축을 제외한 두 축 중 최대 스케일을 적용 (Unity의 캡슐 스케일 규칙 근사)
+        radiusWs = radius * (dir == 0 ? Mathf.Max(sy, sz) : (dir == 1 ? Mathf.Max(sx, sz) : Mathf.Max(sx, sy)));
+
+        // 높이는 해당 축 스케일을 적용
+        float axisScale = (dir == 0 ? sx : (dir == 1 ? sy : sz));
+        float heightWs = height * axisScale;
+
+        // 선분 절반 길이(헤미스피어 제외 실제 ‘원기둥’ 라인 길이 절반)
+        halfLine = Mathf.Max(0f, (heightWs * 0.5f) - radiusWs);
+
+        // 월드 중심
+        centerWs = t.TransformPoint(centerLs);
+
+        // 월드 축 방향
+        Vector3 axisLocal =
+            (dir == 0) ? Vector3.right :
+            (dir == 1) ? Vector3.up    : Vector3.forward;
+
+        axisDirWs = (t.TransformDirection(axisLocal)).normalized;
     }
-#endif
 
-    private void SpawnTempCapsuleTrigger(Vector3 from, Vector3 to, float r)
+    /// from→to 구간에 '보이는' 캡슐 프리미티브 생성(Trigger)
+    private void SpawnCapsuleMarker(Vector3 from, Vector3 to, float radiusWs)
     {
-        GameObject go = new GameObject("DebugCapsuleTrigger");
-        int layer = LayerMask.NameToLayer(DebugLayerName);
-        if (layer >= 0) go.layer = layer;
-        go.transform.position = (from + to) * 0.5f;
-
+        Vector3 mid = (from + to) * 0.5f;
         Vector3 dir = to - from;
-        float length = dir.magnitude;
-        Vector3 axis = (length > 0.0001f) ? dir.normalized : Vector3.forward;
+        float length = Mathf.Max(0.0001f, dir.magnitude);
 
-        var col = go.AddComponent<CapsuleCollider>();
-        col.isTrigger = true;
-        col.direction = 2;            
-        col.radius = r;
-        col.height = Mathf.Max(r * 2f, length + r * 2f);
+        // 프리미티브 캡슐(메쉬+콜라이더)
+        GameObject go = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+        go.name = "SwordPathCapsule";
 
-        go.transform.rotation = Quaternion.FromToRotation(Vector3.forward, axis);
+        int layer = LayerMask.NameToLayer(m_DebugLayerName);
+        if (layer >= 0) go.layer = layer;
 
-        var selfDestruct = go.AddComponent<TempDebugDespawn>();
-        selfDestruct.Initialize(DespawnSeconds);
+        // 회전: 프리미티브 캡슐은 'Y축 길이' 기준 → Y를 dir로 맞춤
+        Quaternion rot = Quaternion.FromToRotation(Vector3.up, dir.normalized);
+        go.transform.SetPositionAndRotation(mid, rot);
+
+        // 스케일 맞추기 (프리미티브 기본: 반지름 0.5, 높이 2)
+        const float baseR = 0.5f;
+        const float baseH = 2f;
+        go.transform.localScale = new Vector3(
+            radiusWs / baseR,                // X
+            (length + 2f * radiusWs) / baseH,// Y (전체 높이)
+            radiusWs / baseR                 // Z
+        );
+
+        // 콜라이더 Trigger화
+        var col = go.GetComponent<CapsuleCollider>();
+        col.isTrigger = true; // direction=Y(1) 기본 유지
+
+        // 머티리얼(투명)
+        var rend = go.GetComponent<Renderer>();
+        rend.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        rend.receiveShadows = false;
+        var mat = new Material(Shader.Find("Legacy Shaders/Transparent/Diffuse"));
+        mat.color = m_MarkerColor;
+        rend.sharedMaterial = mat;
+
+        // N초 후 파괴
+        go.AddComponent<AutoDespawn>().Init(m_LifetimeSeconds);
     }
 }
 
-public class TempDebugDespawn : MonoBehaviour
+public class AutoDespawn : MonoBehaviour
 {
     private float m_Life;
-    private float m_Elapsed;
 
-    public void Initialize(float seconds)
-    {
-        m_Life = Mathf.Max(0.01f, seconds);
-        m_Elapsed = 0f;
-    }
+    public void Init(float seconds) { m_Life = Mathf.Max(0.01f, seconds); }
 
     private void Update()
     {
-        m_Elapsed += Time.deltaTime;
-        if (m_Elapsed >= m_Life)
-        {
-            Destroy(gameObject);
-        }
+        m_Life -= Time.deltaTime;
+        if (m_Life <= 0f) Destroy(gameObject);
     }
 }

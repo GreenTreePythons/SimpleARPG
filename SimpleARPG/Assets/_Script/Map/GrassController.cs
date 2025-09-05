@@ -7,9 +7,9 @@ public class GrassController : MonoBehaviour
     private Material m_GrassMaterial;
     private MeshRenderer m_MeshRenderer;
     
-    List<Transform> m_GrassPoints = new();
     private bool m_IsEmptyList;
     private float m_Pos;
+    private List<Transform> m_GrassPoints = new();
 
     private void Awake()
     {
