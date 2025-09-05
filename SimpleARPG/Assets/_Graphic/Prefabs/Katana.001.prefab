@@ -99,6 +99,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f97753e3a99c8e944bcbb8f4f7e1ff17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_KnockbackForce: 6
-  m_DamagedDuration: 0.2
-  m_HitBoxCollider: {fileID: 0}
+  bladePoints: []
+  drawWhileIdle: 1
+  drawSweptCapsules: 1
+  currentCapsuleColor: {r: 1, g: 0.13899964, b: 0, a: 0.5}
+  sweptCapsuleColor: {r: 1, g: 0.6, b: 0.2, a: 0.35}
+  radius: 0.03
+  spawnDebugTriggerColliders: 1
+  debugLayerName: Ignore Raycast
+  despawnSeconds: 1

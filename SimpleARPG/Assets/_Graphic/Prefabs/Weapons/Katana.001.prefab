@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2129452350550683926
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1073827677188960857}
+  m_Layer: 0
+  m_Name: Tip
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1073827677188960857
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2129452350550683926}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.309, y: 1.1705, z: 0.96}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5360212100815578228}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3006701687931283441
 GameObject:
   m_ObjectHideFlags: 0
@@ -11,6 +42,7 @@ GameObject:
   - component: {fileID: 5360212100815578228}
   - component: {fileID: 7717249419634476616}
   - component: {fileID: 5489982510855484599}
+  - component: {fileID: 2257358378352603142}
   m_Layer: 0
   m_Name: Katana.001
   m_TagString: Untagged
@@ -26,15 +58,17 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3006701687931283441}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.70274866, y: 0.16491911, z: -0.60081625, w: -0.3434615}
+  m_LocalRotation: {x: -0.7027466, y: -0.16491562, z: 0.6008182, w: 0.343464}
   m_LocalPosition: {x: 0.07087644, y: 0.42700103, z: 1.1745355}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4283094709267646706}
   - {fileID: 7534159760341929626}
+  - {fileID: 1073827677188960857}
+  - {fileID: 7208759071257237644}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -16.533, y: -92.517, z: 137.755}
 --- !u!33 &7717249419634476616
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -88,6 +122,29 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &2257358378352603142
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3006701687931283441}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f97753e3a99c8e944bcbb8f4f7e1ff17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bladePoints:
+  - {fileID: 1073827677188960857}
+  - {fileID: 7208759071257237644}
+  drawWhileIdle: 1
+  drawSweptCapsules: 1
+  currentCapsuleColor: {r: 0.2, g: 0.8, b: 1, a: 0.5}
+  sweptCapsuleColor: {r: 1, g: 0.6, b: 0.2, a: 0.35}
+  radius: 0.03
+  spawnDebugTriggerColliders: 0
+  debugLayerName: Ignore Raycast
+  despawnSeconds: 0.2
 --- !u!1 &3084845501057237516
 GameObject:
   m_ObjectHideFlags: 0
@@ -119,6 +176,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5360212100815578228}
   m_LocalEulerAnglesHint: {x: 0, y: -16, z: 0}
+--- !u!1 &3964231721559255368
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7208759071257237644}
+  m_Layer: 0
+  m_Name: Hand
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7208759071257237644
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3964231721559255368}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.564, y: 1.026, z: 0.162}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5360212100815578228}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6616078928281088282
 GameObject:
   m_ObjectHideFlags: 0
