@@ -1,8 +1,8 @@
 # SimpleARPG
 
 ## Unity Engine Environment(6000.1.9f1)
-1. Unity Addresable Asset
-2. Unity Animation Rigging Asset
+1. Unity Addresable
+2. Unity Animation Rigging
 3. Unity Post Processing
 4. UGUI
 5. URP
