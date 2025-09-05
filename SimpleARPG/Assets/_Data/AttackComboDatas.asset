@@ -29,5 +29,5 @@ MonoBehaviour:
       Damage: 10
     - AnimStateName: LightCombo4
       ComboValidStartTime: 0.1
-      ComboValidTime: 0.9
+      ComboValidTime: 0.7
       Damage: 10
