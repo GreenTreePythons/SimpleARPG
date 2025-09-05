@@ -13,6 +13,7 @@
 3. Combo attack system
 4. GrassShader
 5. FSM-based Character Animation Control system
+6. Attack Trail Collision System
     
 ## DesingPattern
 1. SingletonPattern
