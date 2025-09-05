@@ -17,15 +17,15 @@ MonoBehaviour:
     AttackComboInfos:
     - AnimStateName: LightCombo1
       ComboValidStartTime: 0.1
-      ComboValidTime: 0.9
+      ComboValidTime: 0.5
       Damage: 10
     - AnimStateName: LightCombo2
       ComboValidStartTime: 0.1
-      ComboValidTime: 0.9
+      ComboValidTime: 0.5
       Damage: 10
     - AnimStateName: LightCombo3
       ComboValidStartTime: 0.1
-      ComboValidTime: 0.9
+      ComboValidTime: 0.5
       Damage: 10
     - AnimStateName: LightCombo4
       ComboValidStartTime: 0.1
