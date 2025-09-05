@@ -32,8 +32,9 @@ public class SceneManager : MonoBehaviour
     public void LoadScene(string sceneName, LoadSceneMode mode = LoadSceneMode.Single)
     {
         if (AddressableManager.Instance != null)
+        {
             AddressableManager.Instance.ReleaseAll();
-
+        }
         UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName, mode);
     }
 

@@ -47,8 +47,8 @@ public class AttackComboData
 [System.Serializable]
 public class AttackComboInfo
 {
-    [SerializeField] public string AnimStateName;
-    [SerializeField] public float ComboValidStartTime;
-    [SerializeField] public float ComboValidTime;    
-    [SerializeField] public float Damage;
+    public string AnimStateName;
+    public float ComboValidStartTime;
+    public float ComboValidTime;    
+    public float Damage;
 }
