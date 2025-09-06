@@ -14,8 +14,7 @@ public class TitlePage : MonoBehaviour
 
     void OnClickStart()
     {
-        Debug.Log("OnClickStart");
-        SceneManager.Instance.LoadScene("MainScene");
+        SceneSystem.Instance.LoadScene("MainScene");
     }
 
     void OnClickQuit()

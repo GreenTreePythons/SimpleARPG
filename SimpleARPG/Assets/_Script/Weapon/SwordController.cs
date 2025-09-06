@@ -3,7 +3,7 @@ using UnityEngine;
 /// 검의 CapsuleCollider를 기준으로 이동 경로에 '보이는' 캡슐 트리거를 간단히 생성
 /// - 프리미티브 캡슐(메쉬+Trigger) 사용 → 눈으로 바로 확인
 /// - 콜라이더의 월드 반경/높이/축을 반영
-public class SimpleSwordPathColliders_UsingCollider : MonoBehaviour
+public class SwordController : MonoBehaviour
 {
     [Header("Source Collider")]
     [SerializeField] private CapsuleCollider m_SwordCollider;   // ★ 여기를 할당 (검에 붙은 CapsuleCollider)

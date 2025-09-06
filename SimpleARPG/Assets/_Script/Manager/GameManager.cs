@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour, ISceneLoadHandler
 
     public InputManager InputManager { get; private set; }
     public CameraManager CameraManager { get; private set; }
-    public SceneManager SceneManager { get; private set; }
+    public SceneSystem SceneSystem { get; private set; }
 
     private void Awake()
     {
@@ -17,9 +17,7 @@ public class GameManager : MonoBehaviour, ISceneLoadHandler
         InputManager = new GameObject("InputManager").AddComponent<InputManager>();
         InputManager.transform.SetParent(this.transform);
         
-        SceneManager = new GameObject("SceneManager").AddComponent<SceneManager>();
-        SceneManager.transform.SetParent(this.transform);
-        SceneManager.RegisterSceneLoadHandler(this);
+        SceneSystem.Instance.RegisterSceneLoadHandler(this);
     }
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -31,11 +29,9 @@ public class GameManager : MonoBehaviour, ISceneLoadHandler
     private void OnApplicationQuit()
     {
         Debug.Log("Game is quitting. Performing cleanup...");
-
-        if (AddressableManager.Instance != null)
-        {
-            AddressableManager.Instance.ReleaseAll();
-        }
+        
+        AddressableSystem.Instance?.ReleaseAll();
+        
         // if (NetworkManager != null)
         // {
         //     NetworkManager.Disconnect(); // 네트워크 연결 종료

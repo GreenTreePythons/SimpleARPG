@@ -6,50 +6,70 @@ using UnityEngine.Animations.Rigging;
 [RequireComponent(typeof(Animator))]
 public class CharacterAnimationController : MonoBehaviour
 {
-    [SerializeField] TwoBoneIKConstraint RightHandIK;
-    [SerializeField] TwoBoneIKConstraint LeftHandIK;
+    [SerializeField] private CharacterWeaponIKController m_CharacterWeaponIKController;
     
     private Animator m_Animator;
     private string m_CurrentStateName;
+    
+    public CharacterWeaponIKController CharacterWeaponIKController { get; private set; }
 
     private void Awake()
     {
          m_Animator = this.GetComponent<Animator>();
          m_CurrentStateName = string.Empty;
+         CharacterWeaponIKController = m_CharacterWeaponIKController;
     }
 
-    public void PlayNormalIdle()
+    public void PlayEquipping()
     {
-        m_CurrentStateName = "NormalIdle";
+        m_CurrentStateName = "Equip";
         m_Animator.CrossFade(m_CurrentStateName, 0.15f);
     }
     
-    public void PlayBattleIdle()
+    public void PlayUnequipping()
     {
-        m_CurrentStateName = "BattleIdle";
+        m_CurrentStateName = "Unequip";
+        m_Animator.CrossFade(m_CurrentStateName, 0.15f);
+    }
+    
+    public void PlayIdle()
+    {
+        bool isEquiped = GameManager.Instance.InputManager.IsLockOnTarget;
+        string state = isEquiped ? "BattleIdle" : "NormalIdle";
+        if (m_CurrentStateName == state) return;
+        m_CurrentStateName = state;
         m_Animator.CrossFade(m_CurrentStateName, 0.15f);
     }
 
     public void PlayWalking(Vector2 input)
     {
-        if (m_CurrentStateName == $"Walk{Get8Direction(input)}") return;
-        m_CurrentStateName = $"Walk{Get8Direction(input)}";
+        bool isEquipped = GameManager.Instance.InputManager.IsLockOnTarget;
+        string stateName = isEquipped ? $"BattleWalk{Get8Direction(input)}" : "NormalWalk";
+        
+        if (m_CurrentStateName == stateName) return;
+        m_CurrentStateName = stateName;
         m_Animator.CrossFade(m_CurrentStateName, 0.15f);
     }
-
+    
     public void PlayRunning(Vector2 input)
     {
-        m_CurrentStateName = $"Running{Get8Direction(input)}";
+        bool isEquipped = GameManager.Instance.InputManager.IsLockOnTarget;
+        string prefix = isEquipped ? "Battle" : "Normal";
+        string state = $"{prefix}Running{Get8Direction(input)}";
+        m_CurrentStateName = state;
         m_Animator.CrossFade(m_CurrentStateName, 0.15f);
     }
 
     public void PlaySprinting(Vector2 input)
     {
-        m_CurrentStateName = $"Sprint{Get8Direction(input)}";
-        m_Animator.CrossFade(m_CurrentStateName, 0.15f);   
+        bool isEquipped = GameManager.Instance.InputManager.IsLockOnTarget;
+        string prefix = isEquipped ? "Battle" : "Normal";
+        string state = $"{prefix}Sprint{Get8Direction(input)}";
+        m_CurrentStateName = state;
+        m_Animator.CrossFade(m_CurrentStateName, 0.15f);
     }
 
-    public void PlayAttack(string stateName)
+    public void PlayAttacking(string stateName)
     {
         m_CurrentStateName = stateName;
         m_Animator.CrossFade(stateName, 0.15f);
@@ -75,8 +95,6 @@ public class CharacterAnimationController : MonoBehaviour
     
     private string Get8Direction(Vector2 input)
     {
-        // if (input.sqrMagnitude < 0.01f) return "Idle";
-
         float angle = Mathf.Atan2(input.x, input.y) * Mathf.Rad2Deg;
         if (angle < 0) angle += 360f;
 

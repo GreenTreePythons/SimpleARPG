@@ -7,7 +7,9 @@ public enum CharacterStateType
 {
     Idle,
     Moving,
-    Attacking
+    Attacking,
+    Equipping,
+    Unequipping,
 }
 
 public enum ComboType { None, Light, Heavy }
@@ -31,11 +33,12 @@ public class CharacterFSMStatesController : MonoBehaviour
     
     public CharacterStateType CurrentStateType { get; private set; }
     
-    private CharacterStateBase m_CurrentState;
+    private CharacterBaseState m_CurrentBaseState;
     private CharacterAnimationController m_AnimController;
     private PlayerController m_PlayerController;
+    private bool m_LastLockOn;
     
-    private Dictionary<CharacterStateType, CharacterStateBase> m_States;
+    private Dictionary<CharacterStateType, CharacterBaseState> m_States;
     
     // for debug ui
     public int CurrentComboStep;
@@ -47,32 +50,34 @@ public class CharacterFSMStatesController : MonoBehaviour
         m_AnimController = GetComponent<CharacterAnimationController>();
         m_PlayerController = GetComponent<PlayerController>();
 
-        m_States = new Dictionary<CharacterStateType, CharacterStateBase>
+        m_States = new Dictionary<CharacterStateType, CharacterBaseState>
         {
             { CharacterStateType.Idle,      new CharacterIdleState(this, m_AnimController) },
             { CharacterStateType.Moving,    new CharacterMovingState(this, m_AnimController) },
             { CharacterStateType.Attacking, new CharacterAttackingState(this, m_AnimController) },
         };
+        
+        m_LastLockOn = GameManager.Instance.InputManager.IsLockOnTarget;
     }
 
     private void OnEnable()
     {
         CurrentStateType = CharacterStateType.Idle;
-        m_CurrentState = m_States[CurrentStateType];
+        m_CurrentBaseState = m_States[CurrentStateType];
     }
 
     private void Update()
     {   
-        m_CurrentState?.Update();
+        m_CurrentBaseState?.Update();
     }
 
     public void ChangeState(CharacterStateType newState)
     {
         if (CurrentStateType == newState) return;
-        m_CurrentState?.OnExit();
+        m_CurrentBaseState?.OnExit();
         CurrentStateType = newState;
-        m_CurrentState = m_States[newState];
-        m_CurrentState.OnEnter();
+        m_CurrentBaseState = m_States[newState];
+        m_CurrentBaseState.OnEnter();
     }
 
     public void CheckStateTransition(TransitionType allowedTransitions)
