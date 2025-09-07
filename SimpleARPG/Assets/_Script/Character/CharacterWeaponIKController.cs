@@ -11,6 +11,7 @@ public class CharacterWeaponIKController : MonoBehaviour
     
     [Header("Rig & Constraint")]
     [SerializeField] private MultiParentConstraint m_WeaponParent;
+    [SerializeField] private MultiParentConstraint m_WeaponSheathParent;
     [SerializeField] private Rig m_EquipRig;                      
 
     [Header("Blend")]
@@ -29,7 +30,10 @@ public class CharacterWeaponIKController : MonoBehaviour
     private void Awake()
     {
         if (m_WeaponParent != null) m_WeaponParent.weight = 1f;
-        ApplySourceWeightsImmediate(1f, 0f);
+        if(m_WeaponSheathParent != null) m_WeaponSheathParent.weight = 1f;
+        
+        ApplySourceWeights(m_WeaponParent, 1f, 0f);
+        
         ApplyToggleByEquipped(false);
         if (m_EquipRig != null) m_EquipRig.weight = 0f;
     }
@@ -39,7 +43,7 @@ public class CharacterWeaponIKController : MonoBehaviour
 #if UNITY_EDITOR
         if (m_DebugManualMode)
         {
-            ApplySourceWeightsImmediate(m_DebugSheath, m_DebugHand);
+            ApplySourceWeights(m_WeaponParent, m_DebugSheath, m_DebugHand);
             return;
         }
 #endif
@@ -47,7 +51,8 @@ public class CharacterWeaponIKController : MonoBehaviour
         // 소스 가중치 보간
         m_Sheath = Mathf.MoveTowards(m_Sheath, m_TargetSheath, Time.deltaTime * m_BlendSpeed);
         m_Hand   = Mathf.MoveTowards(m_Hand,   m_TargetHand,   Time.deltaTime * m_BlendSpeed);
-        ApplySourceWeightsImmediate(m_Sheath, m_Hand);
+        
+        ApplySourceWeights(m_WeaponParent, m_Sheath, m_Hand);
 
         // 손 IK 보간
         if (m_EquipRig != null && Mathf.Abs(m_EquipRig.weight - m_TargetIk) > 0.0001f)
@@ -67,23 +72,21 @@ public class CharacterWeaponIKController : MonoBehaviour
         m_TargetSheath = equipped ? 0f : 1f;
         m_TargetHand   = equipped ? 1f : 0f;
         m_Sheath = m_TargetSheath; m_Hand = m_TargetHand;
-        ApplySourceWeightsImmediate(m_Sheath, m_Hand);
+        ApplySourceWeights(m_WeaponParent, m_Sheath, m_Hand);
+        
         if (m_EquipRig != null) m_EquipRig.weight = equipped ? 1f : 0f;
         ApplyToggleByEquipped(equipped);
     }
 
-    private void ApplySourceWeightsImmediate(float sheathW, float handW)
+    private void ApplySourceWeights(MultiParentConstraint mpc, float from, float to)
     {
-        if (m_WeaponParent == null) return;
-        var data = m_WeaponParent.data;
-        var srcs = data.sourceObjects; // index 0=Sheath, 1=Hand 가정
-        if (srcs.Count >= 2)
-        {
-            srcs.SetWeight(0, sheathW);
-            srcs.SetWeight(1, handW);
-            data.sourceObjects = srcs;
-            m_WeaponParent.data = data;
-        }
+        if(mpc == null) return;
+        var data = mpc.data;
+        var srcs = data.sourceObjects;
+        srcs.SetWeight(0, from);
+        srcs.SetWeight(1, to);
+        data.sourceObjects = srcs;
+        m_WeaponParent.data = data;
     }
 
     private void ApplyToggleByEquipped(bool equipped)
