@@ -35,5 +35,8 @@ public class CharacterStateDebugGUI : MonoBehaviour
         float ms = Time.deltaTime * 1000.0f;
         string text = string.Format("{0:N1} FPS ({1:N1}ms)", fps, ms);
         GUI.Label(new Rect(10, 160, 400, 40), $"FPS: {text}", style);
+        
+        GUI.Label(new Rect(10, 190, 400, 40), $"IsLightAttackInput: {GameManager.Instance.InputManager.IsLightAttackInput}", style);
+        GUI.Label(new Rect(10, 220, 400, 40), $"IsHeavyAttackInput: {GameManager.Instance.InputManager.IsHeavyAttackInput}", style);
     }
 }

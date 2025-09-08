@@ -2,11 +2,12 @@
 
 public class CharacterAttackingState : CharacterBaseState
 {
-    private AttackComboInfo[] m_ComboDatas;
+    private AttackComboInfo[] m_ComboInfos;
     private int m_ComboStep;
     private float m_CurrentComboElapsedTime;
     private AttackComboInfo m_CurrentComboInfo;
     private bool m_IsNextComboReserved;
+    private ComboType m_CurrentComboType;
     private ComboType m_ReservedNextComboType;
     
     public CharacterAttackingState(CharacterFSMStatesController controller, CharacterAnimationController animController)
@@ -17,8 +18,9 @@ public class CharacterAttackingState : CharacterBaseState
         base.OnEnter();
         m_ComboStep = 0;
         ClearComboState();
-        m_ComboDatas = m_StateController.GetComboDatas(GameManager.Instance.InputManager.LatestComboTypeInput);
-        m_CurrentComboInfo = m_ComboDatas[m_ComboStep];
+        m_CurrentComboType = GameManager.Instance.InputManager.LatestComboTypeInput;
+        m_ComboInfos = m_StateController.GetComboDatas(m_CurrentComboType);
+        m_CurrentComboInfo = m_ComboInfos[m_ComboStep];
     }
 
     public override void Update()
@@ -40,15 +42,20 @@ public class CharacterAttackingState : CharacterBaseState
                 m_ReservedNextComboType = input;
                 m_IsNextComboReserved = true;
                 m_StateController.NextComboQueued = true;
+                if (m_CurrentComboType != m_ReservedNextComboType)
+                {
+                    m_ComboStep = 0;
+                    canTransitionToNextCombo = false;
+                }
             }
         }
         
         // play next combo
         if (m_IsNextComboReserved && canTransitionToNextCombo)
         {
-            if (m_ComboStep < m_ComboDatas.Length)
+            if (m_ComboStep < m_ComboInfos.Length)
             {
-                m_CurrentComboInfo = m_ComboDatas[m_ComboStep];
+                m_CurrentComboInfo = m_ComboInfos[m_ComboStep];
                 m_AnimController.PlayAttacking(m_CurrentComboInfo.AnimStateName);
                 
                 m_ComboStep++;
