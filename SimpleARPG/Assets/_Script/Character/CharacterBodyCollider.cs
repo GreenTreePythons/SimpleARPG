@@ -6,8 +6,8 @@ public class CharacterBodyCollider : MonoBehaviour
 
     public void TakeHit(float damage, Vector3 hitPoint, Vector3 hitNormal)
     {
-        Debug.Log($"{m_Owner.name} took {damage} damage!");
-        
+        // Debug.Log($"{m_Owner.name} took {damage} damage!");
+        Debug.Log($"hitPoint: {hitPoint}, normal: {hitNormal}");
         // TODO: 체력 감소, 경직, 이펙트, 사운드 등
     }
 }

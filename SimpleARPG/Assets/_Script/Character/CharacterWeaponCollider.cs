@@ -9,12 +9,12 @@ public class CharacterWeaponCollider : MonoBehaviour
     {
         if (other.gameObject == m_Owner) return;
 
-        CharacterBodyCollider hurtbox = other.GetComponent<CharacterBodyCollider>();
-        if (hurtbox != null)
+        CharacterBodyCollider bodyCollider = other.GetComponent<CharacterBodyCollider>();
+        if (bodyCollider != null)
         {
             Vector3 point = other.ClosestPoint(transform.position);
             Vector3 normal = (other.transform.position - transform.position).normalized;
-            hurtbox.TakeHit(m_Damage, point, normal);
+            bodyCollider.TakeHit(m_Damage, point, normal);
         }
     }
 }

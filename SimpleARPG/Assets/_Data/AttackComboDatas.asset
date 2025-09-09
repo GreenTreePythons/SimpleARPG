@@ -15,6 +15,10 @@ MonoBehaviour:
   ComboDatas:
   - ComboType: 1
     AttackComboInfos:
+    - AnimStateName: LightCombo_A0
+      ComboValidStartTime: 0.1
+      ComboValidTime: 0.5
+      Damage: 10
     - AnimStateName: LightCombo_A1
       ComboValidStartTime: 0.1
       ComboValidTime: 0.5
@@ -33,6 +37,10 @@ MonoBehaviour:
       Damage: 10
   - ComboType: 2
     AttackComboInfos:
+    - AnimStateName: LightCombo_B0
+      ComboValidStartTime: 0.1
+      ComboValidTime: 0.5
+      Damage: 10
     - AnimStateName: LightCombo_B1
       ComboValidStartTime: 0.1
       ComboValidTime: 0.5
@@ -46,10 +54,6 @@ MonoBehaviour:
       ComboValidTime: 0.5
       Damage: 10
     - AnimStateName: LightCombo_B4
-      ComboValidStartTime: 0.1
-      ComboValidTime: 0.7
-      Damage: 10
-    - AnimStateName: LightCombo_B5
       ComboValidStartTime: 0.1
       ComboValidTime: 0.7
       Damage: 10

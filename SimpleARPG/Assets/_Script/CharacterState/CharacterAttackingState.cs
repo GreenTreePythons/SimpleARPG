@@ -73,6 +73,11 @@ public class CharacterAttackingState : CharacterBaseState
         }
     }
 
+    private void SetTarGet()
+    {
+        
+    }
+
     private void ClearComboState()
     {
         m_CurrentComboElapsedTime = 0f;
