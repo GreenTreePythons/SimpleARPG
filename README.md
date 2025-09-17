@@ -6,6 +6,7 @@
 3. Unity Post Processing
 4. UGUI
 5. URP
+6. Input system
 
 ## System
 1. FSM
