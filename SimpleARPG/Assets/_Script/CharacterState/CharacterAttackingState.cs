@@ -23,9 +23,9 @@ public class CharacterAttackingState : CharacterBaseState
         m_CurrentComboInfo = m_ComboInfos[m_ComboStep];
     }
 
-    public override void Update()
+    public override void OnUpdate()
     {
-        base.Update();
+        base.OnUpdate();
         m_CurrentComboElapsedTime += Time.deltaTime;
         m_StateController.ComboTimer = m_CurrentComboElapsedTime;
 

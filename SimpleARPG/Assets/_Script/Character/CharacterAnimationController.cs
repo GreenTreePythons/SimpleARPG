@@ -12,6 +12,7 @@ public class CharacterAnimationController : MonoBehaviour
     private string m_CurrentStateName;
     
     public CharacterWeaponIKController CharacterWeaponIKController { get; private set; }
+    public Animator GetAnimator() => m_Animator;
 
     private void Awake()
     {

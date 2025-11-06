@@ -37,4 +37,6 @@ public class PlayerController : MonoBehaviour
             m_IsCameraModeUpdated = isLockOn;
         }
     }
+    
+    public bool HasMoveInput() => GameManager.Instance.InputManager.MoveDirection.sqrMagnitude > 0.01f;
 }

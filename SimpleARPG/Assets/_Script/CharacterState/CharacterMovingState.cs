@@ -10,9 +10,9 @@ public class CharacterMovingState : CharacterBaseState
         base.OnEnter();
     }
 
-    public override void Update()
+    public override void OnUpdate()
     {
-        base.Update();
+        base.OnUpdate();
 
         // 카메라 기준 이동 방향 변환
         Vector2 moveInput = GameManager.Instance.InputManager.MoveDirection;

@@ -31,16 +31,6 @@ public class GameManager : MonoBehaviour, ISceneLoadHandler
         Debug.Log("Game is quitting. Performing cleanup...");
         
         AddressableSystem.Instance?.ReleaseAll();
-        
-        // if (NetworkManager != null)
-        // {
-        //     NetworkManager.Disconnect(); // 네트워크 연결 종료
-        // }
-        // if (SaveDataManager != null)
-        // {
-        //     SaveDataManager.SaveGameData(); // 게임 데이터 저장
-        // }
-        // 기타 필요한 종료 로직...
     }
 
     public void PauseGame()

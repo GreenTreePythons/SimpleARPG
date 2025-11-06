@@ -8,6 +8,7 @@ public enum CharacterStateType
     Idle,
     Moving,
     Attacking,
+    Attacked,
     Equipping,
     Unequipping,
 }
@@ -36,7 +37,8 @@ public class CharacterFSMStatesController : MonoBehaviour
     private CharacterBaseState m_CurrentBaseState;
     private CharacterAnimationController m_AnimController;
     private PlayerController m_PlayerController;
-    private bool m_LastLockOn;
+    private bool m_InputLocked;
+    private bool m_MoveLocked;
     
     private Dictionary<CharacterStateType, CharacterBaseState> m_States;
     
@@ -56,8 +58,6 @@ public class CharacterFSMStatesController : MonoBehaviour
             { CharacterStateType.Moving,    new CharacterMovingState(this, m_AnimController) },
             { CharacterStateType.Attacking, new CharacterAttackingState(this, m_AnimController) },
         };
-        
-        m_LastLockOn = GameManager.Instance.InputManager.IsLockOnTarget;
     }
 
     private void OnEnable()
@@ -68,7 +68,7 @@ public class CharacterFSMStatesController : MonoBehaviour
 
     private void Update()
     {   
-        m_CurrentBaseState?.Update();
+        m_CurrentBaseState?.OnUpdate();
     }
 
     public void ChangeState(CharacterStateType newState)
@@ -91,21 +91,42 @@ public class CharacterFSMStatesController : MonoBehaviour
                 return;
             }
         }
+        
         if (allowedTransitions.HasFlag(TransitionType.Move) && IsMoving())
         {
             ChangeState(CharacterStateType.Moving);
             return;
         }
+        
         if ((allowedTransitions.HasFlag(TransitionType.Idle) && !IsMoving()))
         {
             ChangeState(CharacterStateType.Idle);
             return;
         }
     }
+    
+    public void OnTakeHit(float damage, Vector3 hitPoint, Vector3 hitNormal, float stunTime = 0.25f, float knockbackForce = 2.0f)
+    {
+        var hitState = new CharacterAttackedState(this, m_AnimController);
+        m_States[CharacterStateType.Attacked] = hitState;
+
+        ChangeState(CharacterStateType.Attacked);
+    }
+
 
     public AttackComboInfo[] GetComboDatas(ComboType comboType) => m_AttackComboDatas.GetComboData(comboType).GetAttackComboInfos();
 
-    public bool IsMoving() => GameManager.Instance.InputManager.MoveDirection.sqrMagnitude > 0.01f;
+    public bool IsMoving()
+    {
+        if (m_MoveLocked) return false;
+        return m_PlayerController.HasMoveInput();
+    }
+    
+    public void SetInputLocked(bool locked)  { m_InputLocked = locked; }
+    public bool IsInputLocked() => m_InputLocked;
+    
+    public void SetMoveLocked(bool locked)   { m_MoveLocked = locked;  }
+    public bool IsMoveLocked()  => m_MoveLocked;
     
     public PlayerController GetPlayerController() => m_PlayerController;
 

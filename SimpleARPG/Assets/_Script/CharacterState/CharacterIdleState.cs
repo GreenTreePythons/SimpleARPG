@@ -15,9 +15,9 @@ public class CharacterIdleState : CharacterBaseState
         m_AnimController.CharacterWeaponIKController.ForceImmediateState(m_IsLockOnTarget);
     }
 
-    public override void Update()
+    public override void OnUpdate()
     {
-        base.Update();
+        base.OnUpdate();
         var isTargetLockOn = GameManager.Instance.InputManager.IsLockOnTarget;
         if (m_IsLockOnTarget != isTargetLockOn)
         {
