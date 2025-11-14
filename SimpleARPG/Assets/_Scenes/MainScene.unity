@@ -215,7 +215,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3691857880610839225, guid: 79050d1cff881064880a111eee938024, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3730097998546923598, guid: 79050d1cff881064880a111eee938024, type: 3}
       propertyPath: m_Controller
@@ -3257,7 +3257,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 163fac55de97481b94b159d8d8fac705, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Owner: {fileID: 1178146164}
 --- !u!136 &1178146167
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -3479,6 +3478,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1269885195}
   - component: {fileID: 1269885198}
+  - component: {fileID: 1269885199}
+  - component: {fileID: 1269885200}
   m_Layer: 0
   m_Name: ARPG_Samurai_Humanoid
   m_TagString: Untagged
@@ -3531,6 +3532,39 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1269885199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1269885194}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85c5ee3928614082aa6f07b88a3e023c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_CharacterWeaponIKController: {fileID: 0}
+--- !u!114 &1269885200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1269885194}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e02b63f9a70408685ae53426ab4993c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  WalkSpeed: 2
+  RunSpeed: 4
+  SprintSpeed: 7
+  RotationSpeed: 10
+  m_AttackComboDatas: {fileID: 11400000, guid: 987afdd8729aa6f44ab15e715c798f99, type: 2}
+  CurrentComboStep: 0
+  ComboTimer: 0
+  NextComboQueued: 0
 --- !u!4 &1281529515 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7772480123214462259, guid: c3b55ea67bd031144af59dbbda95edd6, type: 3}
@@ -4112,7 +4146,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1370666463
 Transform:
   m_ObjectHideFlags: 0

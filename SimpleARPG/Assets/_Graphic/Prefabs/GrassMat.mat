@@ -137,7 +137,7 @@ Material:
     - _Surface: 0
     - _TerrainOffset: 0
     - _TerrainSize: 50
-    - _WindIntensity: 0.2
+    - _WindIntensity: 0.8
     - _WindSpeed: 0.1
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1
@@ -148,7 +148,7 @@ Material:
     - _Color: {r: 0.18645947, g: 0.7924528, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FarColor: {r: 0.5912035, g: 1, b: 0.3066038, a: 0}
-    - _NearColor: {r: 0.09524659, g: 0.6415094, b: 0.075649686, a: 0}
+    - _NearColor: {r: 0.9245283, g: 0.8869918, b: 0.3270737, a: 0}
     - _NearFarRange: {r: 3, g: 25, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
