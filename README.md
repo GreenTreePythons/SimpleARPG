@@ -13,7 +13,7 @@
 ## System
 1. FSM
 2. Lockon camera system
-3. Combo attack system(ScriptableObject-based)
+3. Combo attack system(ScriptableObject-based) [video link](https://blog.naver.com/ssung1301/224099185802)
 4. GrassShader [video link](https://blog.naver.com/ssung1301/224067208537)
 5. FSM-based Character Animation Control system
 6. Attack Trail Collision System
